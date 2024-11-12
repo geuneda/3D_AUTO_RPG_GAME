@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Speed = Animator.StringToHash("Speed");
+
     [Header("이동 관련")]
     [SerializeField] private float detectionRadius = 10f;    // 몬스터 감지 범위
     [SerializeField] private float stopDistance = 2f;        // 공격을 위한 정지 거리
@@ -34,12 +37,12 @@ public class PlayerController : MonoBehaviour
     private void AutoBehavior()
     {
         // 현재 타겟이 없으면 새로 찾기
-        if (currentTarget == null || !currentTarget.activeSelf)
+        if (!currentTarget || !currentTarget.activeSelf)
         {
             FindNewTarget();
         }
         
-        if (currentTarget != null)
+        if (currentTarget)
         {
             float distanceToTarget = Vector3.Distance(transform.position, currentTarget.transform.position);
             
@@ -63,13 +66,13 @@ public class PlayerController : MonoBehaviour
         // 중력
         if (!characterController.isGrounded)
         {
-            characterController.Move(Vector3.down * 9.81f * Time.deltaTime);
+            characterController.Move(Vector3.down * (9.81f * Time.deltaTime));
         }
     }
     
     private void FindNewTarget()
     {
-        // 주변 적 탐지
+        // 주변 적 탐지 TODO : 성능개선필요
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRadius, enemyLayer);
         
         if (hitColliders.Length > 0)
@@ -98,8 +101,8 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         
         // 이동
-        characterController.Move(direction * stats.moveSpeed * Time.deltaTime);
-        animator?.SetFloat("Speed", 1f);
+        characterController.Move(direction * (stats.moveSpeed * Time.deltaTime));
+        animator?.SetFloat(Speed, 1f);
     }
     
     private void AttackTarget()
@@ -111,7 +114,7 @@ public class PlayerController : MonoBehaviour
         // 공격 쿨다운 체크
         if (Time.time - lastAttackTime >= 1f / stats.attackSpeed)
         {
-            animator?.SetTrigger("Attack");
+            animator?.SetTrigger(Attack);
             
             // 데미지 처리
             if (currentTarget.TryGetComponent<EnemyHealth>(out var enemyHealth))
@@ -128,7 +131,7 @@ public class PlayerController : MonoBehaviour
             lastAttackTime = Time.time;
         }
         
-        animator?.SetFloat("Speed", 0f);
+        animator?.SetFloat(Speed, 0f);
     }
     
     // 최종 목적지로 이동
@@ -137,7 +140,7 @@ public class PlayerController : MonoBehaviour
         // 스테이지의 최종 목적지 위치를 가져와서 이동
         // StageManager에서 목적지 정보를 가져와야 함
         // 임시로 forward 방향으로 이동
-        characterController.Move(transform.forward * stats.moveSpeed * Time.deltaTime);
-        animator?.SetFloat("Speed", 1f);
+        characterController.Move(transform.forward * (stats.moveSpeed * Time.deltaTime));
+        animator?.SetFloat(Speed, 1f);
     }
 } 

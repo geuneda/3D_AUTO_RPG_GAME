@@ -4,14 +4,13 @@ using UnityEngine;
 public class CinemachineCameraManager : MonoBehaviour
 {
     [Header("카메라 참조")]
-    [SerializeField][System.Obsolete] private CinemachineVirtualCamera followCam;    // 기본 팔로우 카메라
-    [SerializeField][System.Obsolete] private CinemachineVirtualCamera combatCam;    // 전투용 카메라
+    [SerializeField] private CinemachineCamera followCam;    // 기본 팔로우 카메라
+    [SerializeField] private CinemachineCamera combatCam;    // 전투용 카메라
     
     [Header("카메라 설정")]
     [SerializeField] private float normalPriority = 10;            // 기본 우선순위
     [SerializeField] private float combatPriority = 15;           // 전투시 우선순위
 
-    [System.Obsolete]
     private void Start()
     {
         // 기본 설정
@@ -34,7 +33,6 @@ public class CinemachineCameraManager : MonoBehaviour
     }
 
     // 카메라 초기 설정
-    [System.Obsolete]
     private void SetupCameras(Transform target)
     {
         if (followCam != null)
@@ -51,7 +49,6 @@ public class CinemachineCameraManager : MonoBehaviour
     }
 
     // 전투 상태에 따른 카메라 전환
-    [System.Obsolete]
     public void SetCombatState(bool inCombat)
     {
         if (followCam != null && combatCam != null)

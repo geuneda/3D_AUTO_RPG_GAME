@@ -55,7 +55,7 @@ public class EnemyHealth : MonoBehaviour
     private void DropLoot()
     {
         // 골드 지급
-        GameManager.Instance.AddGold(goldValue);
+        GameCurrency.Instance.AddGold(goldValue);
         
         // 경험치 지급
         if (GameObject.FindGameObjectWithTag("Player")?.TryGetComponent<PlayerLevel>(out var playerLevel) == true)
