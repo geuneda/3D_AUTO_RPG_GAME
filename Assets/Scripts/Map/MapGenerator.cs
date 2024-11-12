@@ -6,7 +6,7 @@ public class MapGenerator : MonoBehaviour
     [Header("맵 크기 설정")]
     [SerializeField] private int mapWidth = 80;          // 맵 가로 크기
     [SerializeField] private int mapHeight = 80;         // 맵 세로 크기
-    [SerializeField] private float cellSize = 2f;        // 각 셀의 크기
+    [SerializeField] public float CellSize = 2f;        // 각 셀의 크기
     
     [Header("프리팹 참조")]
     [SerializeField] private GameObject floorPrefab;     // 바닥
@@ -25,8 +25,11 @@ public class MapGenerator : MonoBehaviour
     private Cell[,] grid;                               // 맵 그리드
     private Vector2Int startPos;                        // 시작 위치
     private Vector2Int bossPos;                         // 보스 위치
-    private List<Vector2Int> mainPath;                  // 주 경로 좌표저장
-    
+    public List<Vector2Int> MainPath { get; private set; }
+
+    public delegate void MapGeneratedHandler();
+    public event MapGeneratedHandler OnMapGenerated;
+
     private void Start()
     {
         GenerateMap();
@@ -38,6 +41,9 @@ public class MapGenerator : MonoBehaviour
         InitializeGrid();
         GeneratePath();
         CreateMapMesh();
+        
+        // 경로 생성 완료 후 이벤트 발생
+        OnMapGenerated?.Invoke();
     }
     
     private void InitializeGrid()
@@ -60,9 +66,9 @@ public class MapGenerator : MonoBehaviour
     // 경로 생성
     private void GeneratePath()
     {
-        mainPath = new List<Vector2Int>();
+        MainPath = new List<Vector2Int>();
         Vector2Int currentPos = startPos;
-        mainPath.Add(currentPos);
+        MainPath.Add(currentPos);
 
         // 맵을 여러 구역으로 나누어 경유점 생성
         int numSections = Random.Range(4, 7);  // 경로를 4~6개의 구역으로 나눔
@@ -117,15 +123,15 @@ public class MapGenerator : MonoBehaviour
                 pathPoint.x = Mathf.Clamp(pathPoint.x, pathWidth + 2, mapWidth - pathWidth - 2);
                 pathPoint.y = Mathf.Clamp(pathPoint.y, pathWidth + 2, mapHeight - pathWidth - 2);
                 
-                if (!mainPath.Contains(pathPoint))
+                if (!MainPath.Contains(pathPoint))
                 {
-                    mainPath.Add(pathPoint);
+                    MainPath.Add(pathPoint);
                 }
             }
         }
 
-        // 경로 주변을 바닥으로 설정 (기존 코드와 동일)
-        foreach (Vector2Int pathPos in mainPath)
+        // 경로 주변을 바닥으로 설정
+        foreach (Vector2Int pathPos in MainPath)
         {
             for (int x = -pathWidth; x <= pathWidth; x++)
             {
@@ -169,7 +175,7 @@ public class MapGenerator : MonoBehaviour
         for (int i = 0; i < numRooms; i++)
         {
             // 메인 경로에서 랜덤한 위치 선택
-            Vector2Int roomCenter = mainPath[Random.Range(0, mainPath.Count)];
+            Vector2Int roomCenter = MainPath[Random.Range(0, MainPath.Count)];
             
             // 방 크기 설정
             int roomWidth = Random.Range(4, 8);
@@ -206,25 +212,25 @@ public class MapGenerator : MonoBehaviour
         {
             for (int z = 0; z < mapHeight; z++)
             {
-                Vector3 worldPos = new Vector3(x * cellSize, 0, z * cellSize);
+                Vector3 worldPos = new Vector3(x * CellSize, 0, z * CellSize);
                 
                 if (grid[x, z].type == CellType.Floor)
                 {
                     GameObject floor = Instantiate(floorPrefab, worldPos, Quaternion.identity, mapHolder);
-                    floor.transform.localScale = new Vector3(cellSize, 1, cellSize);
+                    floor.transform.localScale = new Vector3(CellSize, 1, CellSize);
                 }
                 else
                 {
                     // 벽 생성 위치와 스케일 수정
                     Vector3 wallPos = worldPos + Vector3.up * (wallHeight / 2);
                     GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, mapHolder);
-                    wall.transform.localScale = new Vector3(cellSize, wallHeight, cellSize);
+                    wall.transform.localScale = new Vector3(CellSize, wallHeight, CellSize);
                 }
             }
         }
         
-        Vector3 startWorldPos = GridToWorld(startPos) + Vector3.up * cellSize/2;
-        Vector3 bossWorldPos = GridToWorld(bossPos) + Vector3.up * cellSize/2;
+        Vector3 startWorldPos = GridToWorld(startPos) + Vector3.up * CellSize/2;
+        Vector3 bossWorldPos = GridToWorld(bossPos) + Vector3.up * CellSize/2;
 
         GameObject startMarker = Instantiate(startPrefab, startWorldPos, Quaternion.identity, mapHolder);
 
@@ -235,7 +241,7 @@ public class MapGenerator : MonoBehaviour
     // 그리드 좌표를 월드 좌표로 변환
     private Vector3 GridToWorld(Vector2Int gridPos)
     {
-        return new Vector3(gridPos.x * cellSize, 0, gridPos.y * cellSize);
+        return new Vector3(gridPos.x * CellSize, 0, gridPos.y * CellSize);
     }
     
     // 좌표가 맵 범위 내인지 확인
