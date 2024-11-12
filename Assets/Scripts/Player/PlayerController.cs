@@ -118,6 +118,13 @@ public class PlayerController : MonoBehaviour
         if (stats == null) return;
         if (Time.time - lastAttackTime < 1f / stats.AttackSpeed) return;
 
+        if (currentTarget != null)
+        {
+            Vector3 directionToTarget = currentTarget.transform.position - transform.position;
+            directionToTarget.y = 0;
+            transform.rotation = Quaternion.LookRotation(directionToTarget);
+        }
+
         animator?.SetTrigger("Attack");
 
         if (currentTarget != null)
