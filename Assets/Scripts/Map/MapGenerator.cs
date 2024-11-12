@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -30,6 +31,13 @@ public class MapGenerator : MonoBehaviour
     public delegate void MapGeneratedHandler();
     public event MapGeneratedHandler OnMapGenerated;
 
+    private NavMeshSurface navMeshSurface;
+
+    private void Awake()
+    {
+        navMeshSurface = GetComponent<NavMeshSurface>();
+    }
+
     private void Start()
     {
         GenerateMap();
@@ -41,6 +49,12 @@ public class MapGenerator : MonoBehaviour
         InitializeGrid();
         GeneratePath();
         CreateMapMesh();
+        
+        // NavMesh 베이크
+        if (navMeshSurface != null)
+        {
+            navMeshSurface.BuildNavMesh();
+        }
         
         // 경로 생성 완료 후 이벤트 발생
         OnMapGenerated?.Invoke();
