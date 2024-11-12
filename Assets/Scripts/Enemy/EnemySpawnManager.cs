@@ -16,12 +16,10 @@ public class EnemySpawnManager : MonoBehaviour
     
     private MapGenerator mapGenerator;
     private GameObject spawnedBoss;
-    private PlayerController playerController;
     
     private void Start()
     {
         mapGenerator = FindFirstObjectByType<MapGenerator>();
-        playerController = FindFirstObjectByType<PlayerController>();
         if (mapGenerator != null)
         {
             mapGenerator.OnMapGenerated += SpawnEnemies;
@@ -93,9 +91,5 @@ public class EnemySpawnManager : MonoBehaviour
     private void SpawnBoss(Vector3 position)
     {
         spawnedBoss = Instantiate(bossEnemyPrefab, position, Quaternion.identity);
-        if (playerController != null)
-        {
-            playerController.SetBossTarget(spawnedBoss);
-        }
     }
 } 
