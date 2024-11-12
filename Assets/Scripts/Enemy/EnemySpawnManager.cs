@@ -15,10 +15,13 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField] private int eliteEnemiesPerSection = 1;
     
     private MapGenerator mapGenerator;
+    private GameObject spawnedBoss;
+    private PlayerController playerController;
     
     private void Start()
     {
         mapGenerator = FindFirstObjectByType<MapGenerator>();
+        playerController = FindFirstObjectByType<PlayerController>();
         if (mapGenerator != null)
         {
             mapGenerator.OnMapGenerated += SpawnEnemies;
@@ -89,13 +92,10 @@ public class EnemySpawnManager : MonoBehaviour
     
     private void SpawnBoss(Vector3 position)
     {
-        if (bossEnemyPrefab != null)
+        spawnedBoss = Instantiate(bossEnemyPrefab, position, Quaternion.identity);
+        if (playerController != null)
         {
-            GameObject boss = Instantiate(bossEnemyPrefab, position, Quaternion.identity);
-            if (boss.TryGetComponent<NavMeshAgent>(out var agent))
-            {
-                agent.Warp(position);
-            }
+            playerController.SetBossTarget(spawnedBoss);
         }
     }
 } 

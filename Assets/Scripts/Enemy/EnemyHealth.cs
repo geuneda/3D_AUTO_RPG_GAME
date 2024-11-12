@@ -8,6 +8,8 @@ public class EnemyHealth : MonoBehaviour
     public event System.Action<float> OnHealthChanged;
     public event System.Action OnEnemyDeath;
     
+    public bool IsDead { get; private set; }
+    
     private void Awake()
     {
         controller = GetComponent<EnemyController>();
@@ -36,6 +38,7 @@ public class EnemyHealth : MonoBehaviour
         
         if (currentHealth <= 0)
         {
+            IsDead = true;
             Die();
         }
     }

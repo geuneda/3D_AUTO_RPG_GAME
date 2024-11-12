@@ -4,7 +4,7 @@ public class PlayerStats : MonoBehaviour
 {
     [Header("기본 스탯")]
     [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float attackPower = 10f;
+    [SerializeField] private float attackPower = 15f;
     [SerializeField] private float defense = 5f;
     [SerializeField] private float attackSpeed = 1f;
     [SerializeField] private float moveSpeed = 5f;

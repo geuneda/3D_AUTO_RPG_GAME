@@ -65,7 +65,7 @@ public class EnemyController : MonoBehaviour
         
         agent.isStopped = false;
         agent.SetDestination(target.position);
-        animator?.SetBool("IsMoving", true);
+        //animator?.SetBool("IsMoving", true);
     }
     
     private void StopMoving()
@@ -73,14 +73,14 @@ public class EnemyController : MonoBehaviour
         if (!agent.isOnNavMesh) return;
         
         agent.isStopped = true;
-        animator?.SetBool("IsMoving", false);
+        //animator?.SetBool("IsMoving", false);
     }
     
     private void AttackTarget()
     {
         if (Time.time - lastAttackTime < 1f / stats.attackSpeed) return;
         
-        animator?.SetTrigger("Attack");
+        //animator?.SetTrigger("Attack");
         
         if (target.TryGetComponent<PlayerHealth>(out var playerHealth))
         {

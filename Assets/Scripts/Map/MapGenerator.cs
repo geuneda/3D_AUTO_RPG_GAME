@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using Unity.Cinemachine;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -12,8 +13,7 @@ public class MapGenerator : MonoBehaviour
     [Header("프리팹 참조")]
     [SerializeField] private GameObject floorPrefab;     // 바닥
     [SerializeField] private GameObject wallPrefab;      // 벽
-    [SerializeField] private GameObject startPrefab;     // 시작 지점
-    [SerializeField] private GameObject bossPrefab;      // 보스 지점(끝점)
+    [SerializeField] private GameObject playerPrefab;  // 플레이어 프리팹 추가
     
     [Header("경로 설정")]
     [SerializeField] private int pathWidth = 2;          // 경로 너비 최소 2 이상으로 설정
@@ -49,12 +49,6 @@ public class MapGenerator : MonoBehaviour
         InitializeGrid();
         GeneratePath();
         CreateMapMesh();
-        
-        // NavMesh 베이크
-        if (navMeshSurface != null)
-        {
-            navMeshSurface.BuildNavMesh();
-        }
         
         // 경로 생성 완료 후 이벤트 발생
         OnMapGenerated?.Invoke();
@@ -242,14 +236,16 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        
-        Vector3 startWorldPos = GridToWorld(startPos) + Vector3.up * CellSize/2;
-        Vector3 bossWorldPos = GridToWorld(bossPos) + Vector3.up * CellSize/2;
 
-        GameObject startMarker = Instantiate(startPrefab, startWorldPos, Quaternion.identity, mapHolder);
+        // NavMesh 베이크
+        if (navMeshSurface != null)
+        {
+            navMeshSurface.BuildNavMesh();
+        }
 
-        GameObject bossMarker = Instantiate(bossPrefab, bossWorldPos, Quaternion.identity, mapHolder);
-
+        // NavMesh 생성 후 플레이어 소환
+        Vector3 playerSpawnPos = new Vector3(startPos.x * CellSize, 1f, startPos.y * CellSize);
+        Instantiate(playerPrefab, playerSpawnPos, Quaternion.identity);
     }
     
     // 그리드 좌표를 월드 좌표로 변환
