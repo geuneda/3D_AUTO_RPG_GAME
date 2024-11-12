@@ -31,6 +31,9 @@ public class MapGenerator : MonoBehaviour
     public delegate void MapGeneratedHandler();
     public event MapGeneratedHandler OnMapGenerated;
 
+    public delegate void PlayerSpawnedHandler(GameObject player);
+    public event PlayerSpawnedHandler OnPlayerSpawned;
+
     private NavMeshSurface navMeshSurface;
 
     private void Awake()
@@ -245,7 +248,8 @@ public class MapGenerator : MonoBehaviour
 
         // NavMesh 생성 후 플레이어 소환
         Vector3 playerSpawnPos = new Vector3(startPos.x * CellSize, 1f, startPos.y * CellSize);
-        Instantiate(playerPrefab, playerSpawnPos, Quaternion.identity);
+        GameObject player = Instantiate(playerPrefab, playerSpawnPos, Quaternion.identity);
+        OnPlayerSpawned?.Invoke(player);  // 이벤트 발생
     }
     
     // 그리드 좌표를 월드 좌표로 변환

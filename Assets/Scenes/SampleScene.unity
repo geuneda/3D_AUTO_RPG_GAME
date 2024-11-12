@@ -534,10 +534,10 @@ MonoBehaviour:
   CameraSide: 1
   CameraDistance: 15
   AvoidObstacles:
-    Enabled: 0
+    Enabled: 1
     CollisionFilter:
       serializedVersion: 2
-      m_Bits: 1
+      m_Bits: 16384
     IgnoreTag: 
     CameraRadius: 0.2
     DampingIntoCollision: 0
@@ -666,10 +666,10 @@ MonoBehaviour:
   CameraSide: 1
   CameraDistance: 10
   AvoidObstacles:
-    Enabled: 0
+    Enabled: 1
     CollisionFilter:
       serializedVersion: 2
-      m_Bits: 1
+      m_Bits: 16384
     IgnoreTag: 
     CameraRadius: 0.2
     DampingIntoCollision: 0
@@ -856,8 +856,6 @@ MonoBehaviour:
   CellSize: 2
   floorPrefab: {fileID: 7491926151605817363, guid: e01ea6d832b8a264681232703dafc06b, type: 3}
   wallPrefab: {fileID: 5792047021200068023, guid: 17248c6b7125b6e4eb88d5ba6a59f20b, type: 3}
-  startPrefab: {fileID: 4514061478357549815, guid: 5069a839feaf32f4887f5874da83b149, type: 3}
-  bossPrefab: {fileID: 7728725496215403432, guid: 990a399c296bbf94aa265ab924c11d29, type: 3}
   playerPrefab: {fileID: 6185057681870296507, guid: 3313b9303243f8d42a4d61880591e8d3, type: 3}
   pathWidth: 2
   minPathTurns: 7

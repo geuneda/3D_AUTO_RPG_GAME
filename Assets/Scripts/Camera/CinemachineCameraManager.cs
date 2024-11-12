@@ -13,38 +13,22 @@ public class CinemachineCameraManager : MonoBehaviour
 
     private void Start()
     {
-        // 기본 설정
-        if (followCam != null)
+        var mapGenerator = FindFirstObjectByType<MapGenerator>();
+        if (mapGenerator != null)
         {
-            followCam.Priority = (PrioritySettings)normalPriority;
-        }
-        
-        if (combatCam != null)
-        {
-            combatCam.Priority = (PrioritySettings)(normalPriority - 1);
-        }
-        
-        // 플레이어 찾아서 카메라 타겟 설정
-        Transform player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (player != null)
-        {
-            SetupCameras(player);
+            mapGenerator.OnPlayerSpawned += SetupCameras;
         }
     }
 
     // 카메라 초기 설정
-    private void SetupCameras(Transform target)
+    private void SetupCameras(GameObject player)
     {
-        if (followCam != null)
+        if (player != null)
         {
-            followCam.Follow = target;
-            followCam.LookAt = target;
-        }
-        
-        if (combatCam != null)
-        {
-            combatCam.Follow = target;
-            combatCam.LookAt = target;
+            followCam.Follow = player.transform;
+            followCam.LookAt = player.transform;
+            combatCam.Follow = player.transform;
+            combatCam.LookAt = player.transform;
         }
     }
 

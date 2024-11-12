@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,12 +18,15 @@ public class PlayerController : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private PlayerStats stats;
+    private CinemachineCameraManager cameraManager;
+    private bool isInCombat;
 
-    private void Awake()
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         stats = GetComponent<PlayerStats>();
+        cameraManager = FindFirstObjectByType<CinemachineCameraManager>();
 
         if (stats != null)
         {
@@ -49,6 +53,14 @@ public class PlayerController : MonoBehaviour
             currentTarget.GetComponent<EnemyHealth>()?.IsDead == true)
         {
             FindNewTarget();
+        }
+
+        // 전투 상태 체크 및 카메라 전환
+        bool newCombatState = currentTarget != null;
+        if (newCombatState != isInCombat)
+        {
+            isInCombat = newCombatState;
+            cameraManager?.SetCombatState(isInCombat);
         }
 
         // 주변에 몬스터가 있으면 처치
