@@ -22,16 +22,18 @@ public class ItemSlotUI : MonoBehaviour
 
     public void SetItem(ItemSlot slot)
     {
+        if (slot == null || slot.item == null) return;
+
         ItemSlot = slot;
         iconImage.sprite = slot.item.icon;
         iconImage.enabled = true;
         
-        if(slot.item.itemType == ItemType.Consumable)
+        if(amountText != null && slot.item.itemType == ItemType.Consumable)
         {
             amountText.text = slot.amount.ToString();
             amountText.enabled = true;
         }
-        else
+        else if(amountText != null)
         {
             amountText.enabled = false;
         }
@@ -42,16 +44,27 @@ public class ItemSlotUI : MonoBehaviour
         ItemSlot = null;
         iconImage.sprite = null;
         iconImage.enabled = false;
-        amountText.enabled = false;
+        if(amountText != null)
+        {
+            amountText.enabled = false;
+        }
     }
 
     private void OnSlotClicked()
     {
         if(ItemSlot == null) return;
 
-        if(ItemSlot.item.itemType == ItemType.Consumable)
-            InventoryManager.Instance.UseItem(ItemSlot);
+        var inventory = InventoryManager.Instance;
+        if(ItemSlot == inventory.equippedWeapon || ItemSlot == inventory.equippedArmor)
+        {
+            inventory.UnequipItem(ItemSlot);
+        }
         else
-            InventoryManager.Instance.EquipItem(ItemSlot);
+        {
+            if(ItemSlot.item.itemType == ItemType.Consumable)
+                InventoryManager.Instance.UseItem(ItemSlot);
+            else
+                InventoryManager.Instance.EquipItem(ItemSlot);
+        }
     }
 } 
