@@ -3,6 +3,8 @@ using UnityEngine;
 public class GameCurrency : Singleton<GameCurrency>
 {
     private int currentGold;
+
+    public int GetCurrentGold() => currentGold;
     
     // 골드 변경시 발생하는 이벤트 UI에 적용 예정
     public static event System.Action<int> OnGoldChanged;
@@ -23,6 +25,9 @@ public class GameCurrency : Singleton<GameCurrency>
         }
         return false;
     }
-    
-    public int GetCurrentGold() => currentGold;
+
+    public bool HasEnoughGold(int amount)
+    {
+        return currentGold >= amount;
+    }
 } 
