@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private PlayerStats stats;
     private CinemachineCameraManager cameraManager;
     private bool isInCombat;
+    private EffectManager effectManager;
 
     private void Start()
     {
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         stats = GetComponent<PlayerStats>();
         cameraManager = FindFirstObjectByType<CinemachineCameraManager>();
+        effectManager = EffectManager.Instance;
 
         if (stats != null)
         {
@@ -148,6 +150,9 @@ public class PlayerController : MonoBehaviour
         }
 
         lastAttackTime = Time.time;
+
+        Vector3 effectPosition = transform.position + transform.forward * 1f;
+        effectManager?.PlayAttackEffect(effectPosition);
     }
 
     private void UpdateMovementAnimation()

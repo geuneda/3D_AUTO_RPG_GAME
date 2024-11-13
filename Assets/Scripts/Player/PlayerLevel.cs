@@ -12,6 +12,13 @@ public class PlayerLevel : MonoBehaviour
     public static event System.Action<int> OnLevelUp;
     public static event System.Action<float, float> OnExpChanged;  // 현재 경험치, 최대 경험치
     
+    private EffectManager effectManager;
+    
+    private void Start()
+    {
+        effectManager = EffectManager.Instance;
+    }
+    
     public void AddExperience(float amount)
     {
         currentExp += amount;
@@ -32,6 +39,8 @@ public class PlayerLevel : MonoBehaviour
         
         OnLevelUp?.Invoke(currentLevel);
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
+        
+        effectManager?.PlayLevelUpEffect(transform.position);
     }
     
     public int GetCurrentLevel() => currentLevel;
