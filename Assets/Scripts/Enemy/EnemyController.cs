@@ -30,32 +30,41 @@ public class EnemyController : MonoBehaviour
         }
     }
     
-    private void Start()
+    private async void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
+        
+        _ = StartAIUpdateLoop();
     }
     
-    private void Update()
+    private async Awaitable StartAIUpdateLoop()
     {
-        if (target == null || stats == null) return;
-        
-        float distanceToTarget = Vector3.Distance(transform.position, target.position);
-        
-        if (distanceToTarget <= stats.detectionRange)
+        while (true)
         {
-            if (distanceToTarget <= stats.attackRange)
+            await Awaitable.NextFrameAsync();
+            
+            if (target == null || stats == null) continue;
+            
+            float distanceToTarget = Vector3.SqrMagnitude(transform.position - target.position);
+            float detectionRangeSqr = stats.detectionRange * stats.detectionRange;
+            
+            if (distanceToTarget <= detectionRangeSqr)
             {
-                StopMoving();
-                AttackTarget();
+                float attackRangeSqr = stats.attackRange * stats.attackRange;
+                if (distanceToTarget <= attackRangeSqr)
+                {
+                    StopMoving();
+                    AttackTarget();
+                }
+                else
+                {
+                    MoveToTarget();
+                }
             }
             else
             {
-                MoveToTarget();
+                StopMoving();
             }
-        }
-        else
-        {
-            StopMoving();
         }
     }
     

@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using Unity.Cinemachine;
-using System.Threading.Tasks;
 
 public class PlayerController : MonoBehaviour
 {
