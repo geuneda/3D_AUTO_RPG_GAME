@@ -928,11 +928,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba0d1a7ec3d42844eb58a55a88b5d26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpSlider: {fileID: 8368639096588627822}
-  hpText: {fileID: 903330093}
+  goldText: {fileID: 27548065}
+  healthText: {fileID: 903330093}
+  healthSlider: {fileID: 8368639096588627822}
   expSlider: {fileID: 2030208420498037271}
   levelText: {fileID: 629212566}
-  goldText: {fileID: 27548065}
 --- !u!1 &614556304
 GameObject:
   m_ObjectHideFlags: 0
@@ -3481,9 +3481,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4114187eb4a8c4bab9b79436f53b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackEffectPrefab: {fileID: 6406097059709277346, guid: df55488d63667d644818a15afa92d471, type: 3}
-  levelUpEffectPrefab: {fileID: 2191877463310125111, guid: 32578e00b28061e4a8592910ea697ec0, type: 3}
-  initialPoolSize: 5
+  levelUpEffectPrefab: {fileID: 4155267355829687655, guid: 32578e00b28061e4a8592910ea697ec0, type: 3}
+  attackEffectPrefab: {fileID: 7673003473313624593, guid: df55488d63667d644818a15afa92d471, type: 3}
 --- !u!4 &2101976190
 Transform:
   m_ObjectHideFlags: 0

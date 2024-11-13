@@ -2093,14 +2093,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59c24de5eacddb54b802d55b559a9529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  attackPower: 100
-  defense: 5
-  attackSpeed: 1
-  moveSpeed: 5
-  healthPerLevel: 10
-  attackPowerPerLevel: 2
+  baseHealth: 100
+  baseAttack: 30
+  baseDefense: 5
+  baseMoveSpeed: 8
+  baseAttackSpeed: 1
+  healthPerLevel: 20
+  attackPerLevel: 5
   defensePerLevel: 1
+  moveSpeedPerLevel: 0.1
+  attackSpeedPerLevel: 0.05
 --- !u!114 &4903846710819377166
 MonoBehaviour:
   m_ObjectHideFlags: 0

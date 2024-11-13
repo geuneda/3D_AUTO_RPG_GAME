@@ -4,27 +4,44 @@ using UnityEngine;
 public class CinemachineCameraManager : MonoBehaviour
 {
     [Header("카메라 참조")]
-    [SerializeField] private CinemachineCamera followCam;    // 기본 팔로우 카메라
-    [SerializeField] private CinemachineCamera combatCam;    // 전투용 카메라
+    [SerializeField] private CinemachineCamera followCam;
+    [SerializeField] private CinemachineCamera combatCam;
     
     [Header("카메라 설정")]
-    [SerializeField] private float normalPriority = 10;            // 기본 우선순위
-    [SerializeField] private float combatPriority = 15;           // 전투시 우선순위
+    [SerializeField] private float normalPriority = 10; 
+    [SerializeField] private float combatPriority = 15;
+
+    private GameEventManager eventManager;
+    private GameObject player;
 
     private void Start()
     {
+        eventManager = GameEventManager.Instance;
         var mapGenerator = FindFirstObjectByType<MapGenerator>();
+        
         if (mapGenerator != null)
         {
             mapGenerator.OnPlayerSpawned += SetupCameras;
         }
+
+        eventManager.OnPlayerDeath += HandlePlayerDeath;
+        eventManager.OnEnemyDeath += HandleEnemyDeath;
     }
 
-    // 카메라 초기 설정
+    private void OnDestroy()
+    {
+        if (eventManager != null)
+        {
+            eventManager.OnPlayerDeath -= HandlePlayerDeath;
+            eventManager.OnEnemyDeath -= HandleEnemyDeath;
+        }
+    }
+
     private void SetupCameras(GameObject player)
     {
         if (player != null)
         {
+            this.player = player;
             followCam.Follow = player.transform;
             followCam.LookAt = player.transform;
             combatCam.Follow = player.transform;
@@ -32,7 +49,6 @@ public class CinemachineCameraManager : MonoBehaviour
         }
     }
 
-    // 전투 상태에 따른 카메라 전환
     public void SetCombatState(bool inCombat)
     {
         if (followCam != null && combatCam != null)
@@ -40,5 +56,18 @@ public class CinemachineCameraManager : MonoBehaviour
             followCam.Priority = (PrioritySettings)(inCombat ? normalPriority - 1 : normalPriority);
             combatCam.Priority = (PrioritySettings)(inCombat ? combatPriority : normalPriority - 1);
         }
+    }
+
+    private void HandlePlayerDeath()
+    {
+        if (combatCam != null)
+        {
+            combatCam.Priority = (PrioritySettings)normalPriority;
+        }
+    }
+
+    private void HandleEnemyDeath()
+    {
+        // TODO : 처치 후 효과
     }
 } 

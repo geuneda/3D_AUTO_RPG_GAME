@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AudioManager : Singleton<AudioManager>
 {
+    [Header("Audio Sources")]
     private ObjectPool<AudioSource> audioSourcePool;
     [SerializeField] private int poolSize = 5;
 

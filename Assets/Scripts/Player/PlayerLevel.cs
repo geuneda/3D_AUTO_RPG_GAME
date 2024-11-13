@@ -8,10 +8,7 @@ public class PlayerLevel : MonoBehaviour
     [SerializeField] private float expToNextLevel = 100f;    // 기본 필요 경험치
     [SerializeField] private float expMultiplier = 1.2f;     // 레벨당 필요 경험치 증가율
     
-    // 레벨, 경험치 변경시 발생하는 이벤트 UI에 적용 예정
-    public static event System.Action<int> OnLevelUp;
-    public static event System.Action<float, float> OnExpChanged;  // 현재 경험치, 최대 경험치
-    
+    private GameEventManager eventManager;
     private EffectManager effectManager;
     
     [Header("Audio")]
@@ -20,13 +17,14 @@ public class PlayerLevel : MonoBehaviour
     
     private void Start()
     {
+        eventManager = GameEventManager.Instance;
         effectManager = EffectManager.Instance;
     }
     
     public void AddExperience(float amount)
     {
         currentExp += amount;
-        OnExpChanged?.Invoke(currentExp, expToNextLevel);
+        eventManager.TriggerPlayerExpChanged(currentExp, expToNextLevel);
         
         // 레벨업 체크
         while (currentExp >= expToNextLevel)
@@ -41,8 +39,8 @@ public class PlayerLevel : MonoBehaviour
         currentLevel++;
         expToNextLevel *= expMultiplier;
         
-        OnLevelUp?.Invoke(currentLevel);
-        OnExpChanged?.Invoke(currentExp, expToNextLevel);
+        eventManager.TriggerPlayerLevelUp(currentLevel);
+        eventManager.TriggerPlayerExpChanged(currentExp, expToNextLevel);
         
         effectManager?.PlayLevelUpEffect(transform.position);
         if (levelUpSound != null)

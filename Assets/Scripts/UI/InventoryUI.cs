@@ -11,6 +11,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private ItemSlotUI armorSlotUI;
     
     private InventoryManager inventory;
+    private GameEventManager eventManager;
     private Dictionary<ItemSlot, ItemSlotUI> slotUIMap = new Dictionary<ItemSlot, ItemSlotUI>();
     private ItemSlotUIPool slotUIPool;
 
@@ -23,11 +24,12 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         inventory = InventoryManager.Instance;
+        eventManager = GameEventManager.Instance;
         
-        inventory.OnItemAdded += AddItemUI;
-        inventory.OnItemRemoved += RemoveItemUI;
-        inventory.OnItemEquipped += EquipItemUI;
-        inventory.OnItemUnequipped += UnequipItemUI;
+        eventManager.OnItemAdded += AddItemUI;
+        eventManager.OnItemRemoved += RemoveItemUI;
+        eventManager.OnItemEquipped += EquipItemUI;
+        eventManager.OnItemUnequipped += UnequipItemUI;
     }
 
     private void AddItemUI(ItemSlot slot)
@@ -71,12 +73,12 @@ public class InventoryUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (inventory != null)
+        if (eventManager != null)
         {
-            inventory.OnItemAdded -= AddItemUI;
-            inventory.OnItemRemoved -= RemoveItemUI;
-            inventory.OnItemEquipped -= EquipItemUI;
-            inventory.OnItemUnequipped -= UnequipItemUI;
+            eventManager.OnItemAdded -= AddItemUI;
+            eventManager.OnItemRemoved -= RemoveItemUI;
+            eventManager.OnItemEquipped -= EquipItemUI;
+            eventManager.OnItemUnequipped -= UnequipItemUI;
         }
 
         // 모든 UI 슬롯 반환

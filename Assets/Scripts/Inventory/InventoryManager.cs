@@ -4,28 +4,18 @@ using UnityEngine;
 
 public class InventoryManager : Singleton<InventoryManager>
 {
+    private GameEventManager eventManager;
     private ItemSlotPool slotPool;
 
     public List<ItemSlot> items = new List<ItemSlot>();
     public ItemSlot equippedWeapon { get; private set; }
     public ItemSlot equippedArmor { get; private set; }
     
-    public event System.Action<ItemSlot> OnItemAdded;
-    public event System.Action<ItemSlot> OnItemRemoved;
-    public event System.Action<ItemSlot> OnItemEquipped;
-    public event System.Action<ItemSlot> OnItemUnequipped;
-
-    private PlayerStats playerStats;
-
     protected override void Awake()
     {
         base.Awake();
+        eventManager = GameEventManager.Instance;
         slotPool = new ItemSlotPool();
-    }
-
-    private void Start()
-    {
-        playerStats = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerStats>();
     }
 
     public void AddItem(ItemData item)
@@ -39,7 +29,7 @@ public class InventoryManager : Singleton<InventoryManager>
             if(existingSlot != null)
             {
                 existingSlot.amount++;
-                OnItemAdded?.Invoke(existingSlot);
+                eventManager.TriggerItemAdded(existingSlot);
                 return;
             }
         }
@@ -48,7 +38,7 @@ public class InventoryManager : Singleton<InventoryManager>
         newSlot.item = item;
         newSlot.amount = 1;
         items.Add(newSlot);
-        OnItemAdded?.Invoke(newSlot);
+        eventManager.TriggerItemAdded(newSlot);
     }
 
     public void RemoveItem(ItemSlot slot)
@@ -57,7 +47,7 @@ public class InventoryManager : Singleton<InventoryManager>
         
         items.Remove(slot);
         slotPool.Return(slot);
-        OnItemRemoved?.Invoke(slot);
+        eventManager.TriggerItemRemoved(slot);
     }
 
     public void UseItem(ItemSlot slot)
@@ -78,7 +68,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 else
                 {
                     slot.amount--;
-                    OnItemAdded?.Invoke(slot);
+                    eventManager.TriggerItemAdded(slot);
                 }
             }
         }
@@ -91,35 +81,28 @@ public class InventoryManager : Singleton<InventoryManager>
             if(equippedWeapon != null)
                 UnequipItem(equippedWeapon);
             equippedWeapon = slot;
-            playerStats?.AddEquipmentBonus(slot.item.attackBonus, 0);
+            eventManager.TriggerItemEquipped(slot);
         }
         else if(slot.item.itemType == ItemType.Armor)
         {
             if(equippedArmor != null)
                 UnequipItem(equippedArmor);
             equippedArmor = slot;
-            playerStats?.AddEquipmentBonus(0, slot.item.defenseBonus);
+            eventManager.TriggerItemEquipped(slot);
         }
 
         items.Remove(slot);
-        OnItemEquipped?.Invoke(slot);
     }
 
     public void UnequipItem(ItemSlot slot)
     {
         if(slot == equippedWeapon)
-        {
             equippedWeapon = null;
-            playerStats?.RemoveEquipmentBonus(slot.item.attackBonus, 0);
-        }
         else if(slot == equippedArmor)
-        {
             equippedArmor = null;
-            playerStats?.RemoveEquipmentBonus(0, slot.item.defenseBonus);
-        }
 
         items.Add(slot);
-        OnItemUnequipped?.Invoke(slot);
+        eventManager.TriggerItemUnequipped(slot);
     }
 
     private void OnDestroy()

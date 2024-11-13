@@ -3,16 +3,20 @@ using UnityEngine;
 public class GameCurrency : Singleton<GameCurrency>
 {
     private int currentGold;
+    private GameEventManager eventManager;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        eventManager = GameEventManager.Instance;
+    }
 
     public int GetCurrentGold() => currentGold;
-    
-    // 골드 변경시 발생하는 이벤트 UI에 적용 예정
-    public static event System.Action<int> OnGoldChanged;
     
     public void AddGold(int amount)
     {
         currentGold += amount;
-        OnGoldChanged?.Invoke(currentGold);
+        eventManager.TriggerGoldChanged(currentGold);
     }
     
     public bool SpendGold(int amount)
@@ -20,7 +24,7 @@ public class GameCurrency : Singleton<GameCurrency>
         if (currentGold >= amount)
         {
             currentGold -= amount;
-            OnGoldChanged?.Invoke(currentGold);
+            eventManager.TriggerGoldChanged(currentGold);
             return true;
         }
         return false;

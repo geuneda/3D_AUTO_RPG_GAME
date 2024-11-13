@@ -10,12 +10,10 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField] private GameObject bossEnemyPrefab;
     
     [Header("스폰 설정")]
-    [SerializeField] private float minSpawnDistance = 5f;
     [SerializeField] private int normalEnemiesPerSection = 3;
     [SerializeField] private int eliteEnemiesPerSection = 1;
     
     private MapGenerator mapGenerator;
-    private GameObject spawnedBoss;
     
     private void Start()
     {
@@ -36,7 +34,6 @@ public class EnemySpawnManager : MonoBehaviour
         
         List<Vector2Int> path = mapGenerator.MainPath;
         int pathLength = path.Count;
-        
         int numSections = pathLength / 20;
         
         for (int i = 0; i < numSections; i++)
@@ -59,7 +56,7 @@ public class EnemySpawnManager : MonoBehaviour
         {
             Vector3 bossPosition = new Vector3(path[pathLength - 1].x * mapGenerator.CellSize, 0, 
                                              path[pathLength - 1].y * mapGenerator.CellSize);
-            SpawnBoss(bossPosition);
+            Instantiate(bossEnemyPrefab, bossPosition, Quaternion.identity);
         }
     }
     
@@ -86,10 +83,5 @@ public class EnemySpawnManager : MonoBehaviour
         {
             agent.Warp(spawnPosition);
         }
-    }
-    
-    private void SpawnBoss(Vector3 position)
-    {
-        spawnedBoss = Instantiate(bossEnemyPrefab, position, Quaternion.identity);
     }
 } 

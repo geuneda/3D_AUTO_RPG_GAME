@@ -3,16 +3,15 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     private EnemyController controller;
+    private GameEventManager eventManager;
     private float currentHealth;
-    
-    public event System.Action<float> OnHealthChanged;
-    public event System.Action OnEnemyDeath;
     
     public bool IsDead { get; private set; }
     
     private void Awake()
     {
         controller = GetComponent<EnemyController>();
+        eventManager = GameEventManager.Instance;
     }
     
     private void Start()
@@ -34,7 +33,7 @@ public class EnemyHealth : MonoBehaviour
         float actualDamage = Mathf.Max(0, damage - controller.GetStats().defense);
         currentHealth = Mathf.Max(0, currentHealth - actualDamage);
         
-        OnHealthChanged?.Invoke(currentHealth / controller.GetStats().maxHealth);
+        eventManager.TriggerEnemyHealthChanged(currentHealth / controller.GetStats().maxHealth);
         
         if (currentHealth <= 0)
         {
@@ -46,7 +45,7 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         DropLoot();
-        OnEnemyDeath?.Invoke();
+        eventManager.TriggerEnemyDeath();
         gameObject.SetActive(false);
     }
     
@@ -67,7 +66,7 @@ public class EnemyHealth : MonoBehaviour
         if (controller != null && controller.GetStats() != null)
         {
             currentHealth = controller.GetStats().maxHealth;
-            OnHealthChanged?.Invoke(1f);
+            eventManager.TriggerEnemyHealthChanged(1f);
         }
     }
 } 

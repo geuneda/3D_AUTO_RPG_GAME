@@ -3,66 +3,67 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     [Header("기본 스탯")]
-    [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float attackPower = 15f;
-    [SerializeField] private float defense = 5f;
-    [SerializeField] private float attackSpeed = 1f;
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float baseHealth = 100f;
+    [SerializeField] private float baseAttack = 30f;
+    [SerializeField] private float baseDefense = 5f;
+    [SerializeField] private float baseMoveSpeed = 8f;
+    [SerializeField] private float baseAttackSpeed = 1f;
 
-    [Header("레벨링")]
-    [SerializeField] private float healthPerLevel = 10f;
-    [SerializeField] private float attackPowerPerLevel = 2f;
+    [Header("레벨당 증가량")]
+    [SerializeField] private float healthPerLevel = 20f;
+    [SerializeField] private float attackPerLevel = 5f;
     [SerializeField] private float defensePerLevel = 1f;
+    [SerializeField] private float moveSpeedPerLevel = 0.1f;
+    [SerializeField] private float attackSpeedPerLevel = 0.05f;
 
-    private PlayerLevel playerLevel;
+    private GameEventManager eventManager;
+    public event System.Action OnStatsChanged;
 
-    private float equipmentAttackBonus;
-    private float equipmentDefenseBonus;
+    public float MaxHealth { get; private set; }
+    public float Attack { get; private set; }
+    public float Defense { get; private set; }
+    public float MoveSpeed { get; private set; }
+    public float AttackSpeed { get; private set; }
 
-    public float MaxHealth => maxHealth + ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * healthPerLevel;
-    public float AttackPower => attackPower + 
-        ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * attackPowerPerLevel + 
-        equipmentAttackBonus;
-    public float Defense => defense + 
-        ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * defensePerLevel + 
-        equipmentDefenseBonus;
-    public float AttackSpeed => attackSpeed;
-    public float MoveSpeed => moveSpeed;
+    public float AttackPower => Attack;
 
     private void Awake()
     {
-        playerLevel = GetComponent<PlayerLevel>();
+        eventManager = GameEventManager.Instance;
+        UpdateBaseStats();
     }
 
     private void OnEnable()
     {
-        PlayerLevel.OnLevelUp += UpdateStatsOnLevelUp;
+        eventManager.OnPlayerLevelUp += UpdateStatsOnLevelUp;
     }
 
     private void OnDisable()
     {
-        PlayerLevel.OnLevelUp -= UpdateStatsOnLevelUp;
+        if (eventManager != null)
+        {
+            eventManager.OnPlayerLevelUp -= UpdateStatsOnLevelUp;
+        }
     }
 
-    private void UpdateStatsOnLevelUp(int newLevel)
+    private void UpdateBaseStats()
     {
-        // 레벨업 시 이벤트 발생 (UI 업데이트 등에 사용)
+        MaxHealth = baseHealth;
+        Attack = baseAttack;
+        Defense = baseDefense;
+        MoveSpeed = baseMoveSpeed;
+        AttackSpeed = baseAttackSpeed;
         OnStatsChanged?.Invoke();
     }
 
-    public event System.Action OnStatsChanged;
-
-    public void AddEquipmentBonus(float attack, float defense)
+    private void UpdateStatsOnLevelUp(int level)
     {
-        equipmentAttackBonus += attack;
-        equipmentDefenseBonus += defense;
+        MaxHealth = baseHealth + (healthPerLevel * (level - 1));
+        Attack = baseAttack + (attackPerLevel * (level - 1));
+        Defense = baseDefense + (defensePerLevel * (level - 1));
+        MoveSpeed = baseMoveSpeed + (moveSpeedPerLevel * (level - 1));
+        AttackSpeed = baseAttackSpeed + (attackSpeedPerLevel * (level - 1));
         OnStatsChanged?.Invoke();
     }
 
-    public void RemoveEquipmentBonus(float attack, float defense)
-    {
-        equipmentAttackBonus -= attack;
-        equipmentDefenseBonus -= defense;
-        OnStatsChanged?.Invoke();
-    }
 } 

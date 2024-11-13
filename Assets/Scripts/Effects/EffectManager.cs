@@ -4,70 +4,78 @@ using UnityEngine;
 
 public class EffectManager : Singleton<EffectManager>
 {
-    [Header("Effects")]
-    [SerializeField] private ParticleSystem attackEffectPrefab;
-    [SerializeField] private ParticleSystem levelUpEffectPrefab;
-
-    [Header("Pool Settings")]
-    [SerializeField] private int initialPoolSize = 5;
-
-    private Dictionary<ParticleSystem, ObjectPool<ParticleSystem>> effectPools;
-    private Dictionary<ParticleSystem, ParticleSystem> instanceToPrefabMap;
-    private Transform poolContainer;
+    [Header("이펙트 프리팹")]
+    [SerializeField] private GameObject levelUpEffectPrefab;
+    [SerializeField] private GameObject attackEffectPrefab;
+    
+    private ObjectPool<ParticleSystem> levelUpEffectPool;
+    private ObjectPool<ParticleSystem> attackEffectPool;
+    private GameEventManager eventManager;
+    
+    private const int POOL_SIZE = 5;
 
     protected override void Awake()
     {
         base.Awake();
         InitializePools();
+        eventManager = GameEventManager.Instance;
+    }
+
+    private void Start()
+    {
+        eventManager.OnPlayerLevelUp += HandleLevelUp;
+    }
+
+    private void OnDestroy()
+    {
+        if (eventManager != null)
+        {
+            eventManager.OnPlayerLevelUp -= HandleLevelUp;
+        }
     }
 
     private void InitializePools()
     {
-        poolContainer = new GameObject("EffectPools").transform;
-        poolContainer.parent = transform;
-        
-        effectPools = new Dictionary<ParticleSystem, ObjectPool<ParticleSystem>>();
-        instanceToPrefabMap = new Dictionary<ParticleSystem, ParticleSystem>();
-        
-        CreatePool(attackEffectPrefab);
-        CreatePool(levelUpEffectPrefab);
+        if (levelUpEffectPrefab != null && levelUpEffectPrefab.TryGetComponent<ParticleSystem>(out var levelUpPS))
+            levelUpEffectPool = new ObjectPool<ParticleSystem>(levelUpPS, POOL_SIZE, transform);
+
+        if (attackEffectPrefab != null && attackEffectPrefab.TryGetComponent<ParticleSystem>(out var attackPS))
+            attackEffectPool = new ObjectPool<ParticleSystem>(attackPS, POOL_SIZE, transform);
     }
 
-    private void CreatePool(ParticleSystem prefab)
+    private void HandleLevelUp(int level)
     {
-        if (prefab == null) return;
-        
-        Transform container = new GameObject(prefab.name + "Pool").transform;
-        container.parent = poolContainer;
-        
-        var pool = new ObjectPool<ParticleSystem>(prefab, initialPoolSize, container);
-        effectPools[prefab] = pool;
-    }
-
-    private void PlayEffect(ParticleSystem prefab, Vector3 position)
-    {
-        if (prefab == null || !effectPools.ContainsKey(prefab)) return;
-
-        var effect = effectPools[prefab].Get();
-        effect.transform.position = position;
-        effect.Play();
-
-        instanceToPrefabMap[effect] = prefab;
-        StartCoroutine(ReturnToPool(effect, effect.main.duration));
-    }
-
-    private IEnumerator ReturnToPool(ParticleSystem effect, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (effect != null && instanceToPrefabMap.ContainsKey(effect))
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
         {
-            effect.Stop();
-            var prefab = instanceToPrefabMap[effect];
-            effectPools[prefab].Return(effect);
-            instanceToPrefabMap.Remove(effect);
+            PlayLevelUpEffect(player.transform.position);
         }
     }
 
-    public void PlayAttackEffect(Vector3 position) => PlayEffect(attackEffectPrefab, position);
-    public void PlayLevelUpEffect(Vector3 position) => PlayEffect(levelUpEffectPrefab, position);
+    public void PlayLevelUpEffect(Vector3 position)
+    {
+        if (levelUpEffectPool != null)
+        {
+            var effect = levelUpEffectPool.Get();
+            effect.transform.position = position;
+            StartCoroutine(ReturnToPool(effect, effect.main.duration, levelUpEffectPool));
+        }
+    }
+
+    public void PlayAttackEffect(Vector3 position)
+    {
+        if (attackEffectPool != null)
+        {
+            var effect = attackEffectPool.Get();
+            effect.transform.position = position;
+            StartCoroutine(ReturnToPool(effect, effect.main.duration, attackEffectPool));
+        }
+    }
+
+    private IEnumerator ReturnToPool(ParticleSystem effect, float duration, ObjectPool<ParticleSystem> pool)
+    {
+        effect.Play();
+        yield return new WaitForSeconds(duration);
+        pool.Return(effect);
+    }
 } 
