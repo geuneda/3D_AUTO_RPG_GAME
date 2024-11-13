@@ -17,13 +17,8 @@ public class CinemachineCameraManager : MonoBehaviour
     private void Start()
     {
         eventManager = GameEventManager.Instance;
-        var mapGenerator = FindFirstObjectByType<MapGenerator>();
         
-        if (mapGenerator != null)
-        {
-            mapGenerator.OnPlayerSpawned += SetupCameras;
-        }
-
+        eventManager.OnPlayerSpawned += SetupCameras;
         eventManager.OnPlayerDeath += HandlePlayerDeath;
         eventManager.OnEnemyDeath += HandleEnemyDeath;
     }
@@ -32,6 +27,7 @@ public class CinemachineCameraManager : MonoBehaviour
     {
         if (eventManager != null)
         {
+            eventManager.OnPlayerSpawned -= SetupCameras;
             eventManager.OnPlayerDeath -= HandlePlayerDeath;
             eventManager.OnEnemyDeath -= HandleEnemyDeath;
         }

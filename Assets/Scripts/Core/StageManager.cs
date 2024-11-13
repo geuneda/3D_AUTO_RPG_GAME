@@ -17,6 +17,7 @@ public class StageManager : Singleton<StageManager>
 
     private GameEventManager eventManager;
     private GameManager gameManager;
+    private GameObject currentPlayer;
 
     protected override void Awake()
     {
@@ -73,13 +74,15 @@ public class StageManager : Singleton<StageManager>
 
     private void StartNewStage()
     {
+        GameManager.Instance.DestroyCurrentPlayer();
+
         var mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapGenerator != null)
         {
             mapGenerator.GenerateMap();
         }
         
-        var player = GameObject.FindGameObjectWithTag("Player");
+        var player = GameManager.Instance.CurrentPlayer;
         if (player != null && player.TryGetComponent<PlayerHealth>(out var health))
         {
             health.ResetHealth();

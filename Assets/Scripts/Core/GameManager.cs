@@ -5,6 +5,10 @@ public class GameManager : Singleton<GameManager>
     private GameEventManager eventManager;
     public GameState CurrentGameState { get; private set; }
     private StageSelectUI stageSelectUI;
+    [SerializeField] private GameObject playerPrefab;
+    private GameObject currentPlayer;
+
+    public GameObject CurrentPlayer => currentPlayer;
 
     protected override void Awake()
     {
@@ -34,6 +38,26 @@ public class GameManager : Singleton<GameManager>
         
         CurrentGameState = newState;
         eventManager.TriggerGameStateChanged(newState);
+    }
+
+    public void SpawnPlayer(Vector3 position)
+    {
+        if (currentPlayer != null)
+        {
+            Destroy(currentPlayer);
+        }
+        
+        currentPlayer = Instantiate(playerPrefab, position, Quaternion.identity);
+        eventManager.TriggerPlayerSpawned(currentPlayer);
+    }
+
+    public void DestroyCurrentPlayer()
+    {
+        if (currentPlayer != null)
+        {
+            Destroy(currentPlayer);
+            currentPlayer = null;
+        }
     }
 }
 

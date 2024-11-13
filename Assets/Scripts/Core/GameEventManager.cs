@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameEventManager : Singleton<GameEventManager>
 {
     // 플레이어관련
@@ -23,6 +25,8 @@ public class GameEventManager : Singleton<GameEventManager>
     public event System.Action OnLoadingFinished;
     public event System.Action<int> OnStageChanged;
     
+    public event System.Action<GameObject> OnPlayerSpawned;
+    
     // 이벤트 트리거 메서드
     public void TriggerPlayerHealthChanged(float healthPercent) => OnPlayerHealthChanged?.Invoke(healthPercent);
     public void TriggerPlayerDeath() => OnPlayerDeath?.Invoke();
@@ -41,4 +45,5 @@ public class GameEventManager : Singleton<GameEventManager>
     public void TriggerLoadingStarted() => OnLoadingStarted?.Invoke();
     public void TriggerLoadingFinished() => OnLoadingFinished?.Invoke();
     public void TriggerStageChanged(int stage) => OnStageChanged?.Invoke(stage);
+    public void TriggerPlayerSpawned(GameObject player) => OnPlayerSpawned?.Invoke(player);
 } 

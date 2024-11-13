@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class StageSelectUI : MonoBehaviour
 {
@@ -33,7 +34,15 @@ public class StageSelectUI : MonoBehaviour
             int stageNumber = i + 1;
             stageButtons[i].onClick.AddListener(() => SelectStage(stageNumber));
             
-            var buttonText = stageButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+            var button = stageButtons[i];
+            var eventTrigger = button.gameObject.GetComponent<EventTrigger>() 
+                ?? button.gameObject.AddComponent<EventTrigger>();
+            
+            var enterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            enterEntry.callback.AddListener((data) => UpdateStageInfo(stageNumber));
+            eventTrigger.triggers.Add(enterEntry);
+            
+            var buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
             if (buttonText != null)
                 buttonText.text = $"Stage {stageNumber}";
         }
@@ -65,7 +74,7 @@ public class StageSelectUI : MonoBehaviour
         float statMultiplier = 1f + (stageManager.StatMultiplierPerStage * (stageNumber - 1));
         float rewardMultiplier = 1f + (stageManager.RewardMultiplierPerStage * (stageNumber - 1));
         
-        stageInfoText.text = $"S스테이지 {stageNumber}";
+        stageInfoText.text = $"스테이지 {stageNumber}";
         difficultyText.text = $"몬스터 강화: {statMultiplier:P0}";
         rewardText.text = $"보상 증가: {rewardMultiplier:P0}";
     }
@@ -75,6 +84,12 @@ public class StageSelectUI : MonoBehaviour
         foreach (var button in stageButtons)
         {
             button.onClick.RemoveAllListeners();
+            
+            // EventTrigger 제거
+            if (button.TryGetComponent<EventTrigger>(out var trigger))
+            {
+                trigger.triggers.Clear();
+            }
         }
         
         if (closeButton != null)

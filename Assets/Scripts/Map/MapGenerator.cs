@@ -12,7 +12,6 @@ public class MapGenerator : MonoBehaviour
     [Header("프리팹 참조")]
     [SerializeField] private GameObject floorPrefab;
     [SerializeField] private GameObject wallPrefab;
-    [SerializeField] private GameObject playerPrefab;
     
     [Header("경로 설정")]
     [SerializeField] private int pathWidth = 2;
@@ -27,9 +26,6 @@ public class MapGenerator : MonoBehaviour
 
     public delegate void MapGeneratedHandler();
     public event MapGeneratedHandler OnMapGenerated;
-
-    public delegate void PlayerSpawnedHandler(GameObject player);
-    public event PlayerSpawnedHandler OnPlayerSpawned;
 
     private NavMeshSurface navMeshSurface;
 
@@ -154,7 +150,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // 경로 주변에 랜덤한 추가 공간 생성
         AddRandomRooms();
     }
 
@@ -252,10 +247,8 @@ public class MapGenerator : MonoBehaviour
             navMeshSurface.BuildNavMesh();
         }
 
-        // NavMesh 생성 후 플레이어 소환
         Vector3 playerSpawnPos = new Vector3(startPos.x * CellSize, 1f, startPos.y * CellSize);
-        GameObject player = Instantiate(playerPrefab, playerSpawnPos, Quaternion.identity);
-        OnPlayerSpawned?.Invoke(player);  // 이벤트 발생
+        GameManager.Instance.SpawnPlayer(playerSpawnPos);
     }
     
     // 그리드 좌표를 월드 좌표로 변환
