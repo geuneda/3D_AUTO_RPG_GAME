@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class LoadingUI : MonoBehaviour
 {
-    [Header("UI Elements")]
+    [Header("UI")]
     [SerializeField] private GameObject loadingPanel;
     [SerializeField] private TextMeshProUGUI stageText;
     [SerializeField] private Slider progressBar;
     [SerializeField] private TextMeshProUGUI tipText;
     
-    [Header("Loading Tips")]
+    [Header("Tips")]
     [SerializeField] private string[] loadingTips;
     
     private GameEventManager eventManager;

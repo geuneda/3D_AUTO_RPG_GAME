@@ -8,12 +8,15 @@ public class StageManager : Singleton<StageManager>
     [SerializeField] private float statMultiplierPerStage = 0.2f;
     [SerializeField] private float rewardMultiplierPerStage = 0.3f;
     
-    private GameEventManager eventManager;
-    private GameManager gameManager;
-
+    public float StatMultiplierPerStage => statMultiplierPerStage;
+    public float RewardMultiplierPerStage => rewardMultiplierPerStage;
+    
     public int CurrentStage => currentStage;
     public float StatMultiplier => 1f + (statMultiplierPerStage * (currentStage - 1));
     public float RewardMultiplier => 1f + (rewardMultiplierPerStage * (currentStage - 1));
+
+    private GameEventManager eventManager;
+    private GameManager gameManager;
 
     protected override void Awake()
     {
