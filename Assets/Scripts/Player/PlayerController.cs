@@ -23,7 +23,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip attackSound;
     [SerializeField] private float attackSoundVolume = 0.8f;
 
+#pragma warning disable CS1998 // 이 비동기 메서드에는 'await' 연산자가 없으며 메서드가 동시에 실행됩니다.
     private async void Start()
+#pragma warning restore CS1998 // 이 비동기 메서드에는 'await' 연산자가 없으며 메서드가 동시에 실행됩니다.
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();

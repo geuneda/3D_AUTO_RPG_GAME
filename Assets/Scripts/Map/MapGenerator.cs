@@ -5,24 +5,24 @@ using Unity.AI.Navigation;
 public class MapGenerator : MonoBehaviour
 {
     [Header("맵 크기 설정")]
-    [SerializeField] private int mapWidth = 80;          // 맵 가로 크기
-    [SerializeField] private int mapHeight = 80;         // 맵 세로 크기
-    [SerializeField] public float CellSize = 2f;        // 각 셀의 크기
+    [SerializeField] private int mapWidth = 80;
+    [SerializeField] private int mapHeight = 80;
+    [SerializeField] public float CellSize = 2f;
     
     [Header("프리팹 참조")]
-    [SerializeField] private GameObject floorPrefab;     // 바닥
-    [SerializeField] private GameObject wallPrefab;      // 벽
-    [SerializeField] private GameObject playerPrefab;  // 플레이어 프리팹 추가
+    [SerializeField] private GameObject floorPrefab;
+    [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject playerPrefab;
     
     [Header("경로 설정")]
-    [SerializeField] private int pathWidth = 2;          // 경로 너비 최소 2 이상으로 설정
+    [SerializeField] private int pathWidth = 2;
     
     [Header("타일 설정")]
-    [SerializeField] private float wallHeight = 4f;  // 벽 높이 설정 추가
+    [SerializeField] private float wallHeight = 4f;
     
-    private Cell[,] grid;                               // 맵 그리드
-    private Vector2Int startPos;                        // 시작 위치
-    private Vector2Int bossPos;                         // 보스 위치
+    private Cell[,] grid;
+    private Vector2Int startPos;
+    private Vector2Int bossPos;
     public List<Vector2Int> MainPath { get; private set; }
 
     public delegate void MapGeneratedHandler();
@@ -215,6 +215,9 @@ public class MapGenerator : MonoBehaviour
         mapHolder = new GameObject("MapHolder").transform;
         mapHolder.parent = transform;
         
+        var floorObjects = new List<GameObject>();
+        var wallObjects = new List<GameObject>();
+
         // 맵 생성
         for (int x = 0; x < mapWidth; x++)
         {
@@ -226,16 +229,22 @@ public class MapGenerator : MonoBehaviour
                 {
                     GameObject floor = Instantiate(floorPrefab, worldPos, Quaternion.identity, mapHolder);
                     floor.transform.localScale = new Vector3(CellSize, 1, CellSize);
+                    floorObjects.Add(floor);
                 }
                 else
                 {
-                    // 벽 생성 위치와 스케일 수정
                     Vector3 wallPos = worldPos + Vector3.up * (wallHeight / 2);
                     GameObject wall = Instantiate(wallPrefab, wallPos, Quaternion.identity, mapHolder);
                     wall.transform.localScale = new Vector3(CellSize, wallHeight, CellSize);
+                    wallObjects.Add(wall);
                 }
             }
         }
+
+        // 메시 결합
+        var meshCombiner = mapHolder.gameObject.AddComponent<MapMeshCombiner>();
+        meshCombiner.CombineMeshes(floorObjects, floorPrefab.GetComponent<MeshRenderer>().sharedMaterial);
+        meshCombiner.CombineMeshes(wallObjects, wallPrefab.GetComponent<MeshRenderer>().sharedMaterial);
 
         // NavMesh 베이크
         if (navMeshSurface != null)
