@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InventoryManager : Singleton<InventoryManager>
 {
+    private ItemSlotPool slotPool;
+
     public List<ItemSlot> items = new List<ItemSlot>();
-    public ItemSlot equippedWeapon;
-    public ItemSlot equippedArmor;
+    public ItemSlot equippedWeapon { get; private set; }
+    public ItemSlot equippedArmor { get; private set; }
     
     public event System.Action<ItemSlot> OnItemAdded;
     public event System.Action<ItemSlot> OnItemRemoved;
@@ -13,6 +16,12 @@ public class InventoryManager : Singleton<InventoryManager>
     public event System.Action<ItemSlot> OnItemUnequipped;
 
     private PlayerStats playerStats;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        slotPool = new ItemSlotPool();
+    }
 
     private void Start()
     {
@@ -25,24 +34,30 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if(item.itemType == ItemType.Consumable)
         {
-            
-            ItemSlot existingSlot = items.Find(slot => slot.item.itemName == item.itemName);
+            var existingSlot = items.Find(slot => slot.item == item);
             
             if(existingSlot != null)
             {
-                items.Remove(existingSlot);
-                OnItemRemoved?.Invoke(existingSlot);
-
-                var _newSlot = new ItemSlot { item = item, amount = existingSlot.amount + 1 };
-                items.Add(_newSlot);
-                OnItemAdded?.Invoke(_newSlot);
+                existingSlot.amount++;
+                OnItemAdded?.Invoke(existingSlot);
                 return;
             }
         }
 
-        var newSlot = new ItemSlot { item = item, amount = 1 };
+        var newSlot = slotPool.Get();
+        newSlot.item = item;
+        newSlot.amount = 1;
         items.Add(newSlot);
         OnItemAdded?.Invoke(newSlot);
+    }
+
+    public void RemoveItem(ItemSlot slot)
+    {
+        if (!items.Contains(slot)) return;
+        
+        items.Remove(slot);
+        slotPool.Return(slot);
+        OnItemRemoved?.Invoke(slot);
     }
 
     public void UseItem(ItemSlot slot)
@@ -56,14 +71,14 @@ public class InventoryManager : Singleton<InventoryManager>
             {
                 health.Heal(slot.item.healthRestoreAmount);
                 
-                items.Remove(slot);
-                OnItemRemoved?.Invoke(slot);
-
-                if(slot.amount > 1)
+                if(slot.amount <= 1)
                 {
-                    var newSlot = new ItemSlot { item = slot.item, amount = slot.amount - 1 };
-                    items.Add(newSlot);
-                    OnItemAdded?.Invoke(newSlot);
+                    RemoveItem(slot);
+                }
+                else
+                {
+                    slot.amount--;
+                    OnItemAdded?.Invoke(slot);
                 }
             }
         }
@@ -105,6 +120,19 @@ public class InventoryManager : Singleton<InventoryManager>
 
         items.Add(slot);
         OnItemUnequipped?.Invoke(slot);
+    }
+
+    private void OnDestroy()
+    {
+        foreach(var slot in items.ToList())
+        {
+            RemoveItem(slot);
+        }
+        
+        if(equippedWeapon != null)
+            slotPool.Return(equippedWeapon);
+        if(equippedArmor != null)
+            slotPool.Return(equippedArmor);
     }
 }
 

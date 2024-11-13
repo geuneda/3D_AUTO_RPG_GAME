@@ -4,13 +4,21 @@ using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
+    [Header("UI")]
     [SerializeField] private Transform itemSlotContainer;
-    [SerializeField] private ItemSlotUI itemSlotPrefab;
+    [SerializeField] private ItemSlotUI slotPrefab;
     [SerializeField] private ItemSlotUI weaponSlotUI;
     [SerializeField] private ItemSlotUI armorSlotUI;
     
     private InventoryManager inventory;
-    private List<ItemSlotUI> itemSlots = new List<ItemSlotUI>();
+    private Dictionary<ItemSlot, ItemSlotUI> slotUIMap = new Dictionary<ItemSlot, ItemSlotUI>();
+    private ItemSlotUIPool slotUIPool;
+
+    private void Awake()
+    {
+        slotUIPool = gameObject.AddComponent<ItemSlotUIPool>();
+        slotUIPool.Initialize(slotPrefab, itemSlotContainer);
+    }
 
     private void Start()
     {
@@ -22,31 +30,26 @@ public class InventoryUI : MonoBehaviour
         inventory.OnItemUnequipped += UnequipItemUI;
     }
 
-    private void OnDestroy()
-    {
-        if (inventory != null)
-        {
-            inventory.OnItemAdded -= AddItemUI;
-            inventory.OnItemRemoved -= RemoveItemUI;
-            inventory.OnItemEquipped -= EquipItemUI;
-            inventory.OnItemUnequipped -= UnequipItemUI;
-        }
-    }
-
     private void AddItemUI(ItemSlot slot)
     {
-        var slotUI = Instantiate(itemSlotPrefab, itemSlotContainer);
-        slotUI.SetItem(slot);
-        itemSlots.Add(slotUI);
+        if (slotUIMap.TryGetValue(slot, out var existingUI))
+        {
+            existingUI.SetItem(slot);
+        }
+        else
+        {
+            var slotUI = slotUIPool.Get();
+            slotUI.SetItem(slot);
+            slotUIMap[slot] = slotUI;
+        }
     }
 
     private void RemoveItemUI(ItemSlot slot)
     {
-        var slotUI = itemSlots.Find(ui => ui.ItemSlot == slot);
-        if(slotUI != null)
+        if (slotUIMap.TryGetValue(slot, out var slotUI))
         {
-            itemSlots.Remove(slotUI);
-            Destroy(slotUI.gameObject);
+            slotUIPool.Return(slotUI);
+            slotUIMap.Remove(slot);
         }
     }
 
@@ -64,5 +67,23 @@ public class InventoryUI : MonoBehaviour
             weaponSlotUI.ClearSlot();
         else if(slot.item.itemType == ItemType.Armor)
             armorSlotUI.ClearSlot();
+    }
+
+    private void OnDestroy()
+    {
+        if (inventory != null)
+        {
+            inventory.OnItemAdded -= AddItemUI;
+            inventory.OnItemRemoved -= RemoveItemUI;
+            inventory.OnItemEquipped -= EquipItemUI;
+            inventory.OnItemUnequipped -= UnequipItemUI;
+        }
+
+        // 모든 UI 슬롯 반환
+        foreach (var slotUI in slotUIMap.Values)
+        {
+            slotUIPool.Return(slotUI);
+        }
+        slotUIMap.Clear();
     }
 } 

@@ -28,14 +28,17 @@ public class ItemSlotUI : MonoBehaviour
         iconImage.sprite = slot.item.icon;
         iconImage.enabled = true;
         
-        if(amountText != null && slot.item.itemType == ItemType.Consumable)
+        if(amountText != null)
         {
-            amountText.text = slot.amount.ToString();
-            amountText.enabled = true;
-        }
-        else if(amountText != null)
-        {
-            amountText.enabled = false;
+            if(slot.item.itemType == ItemType.Consumable && slot.amount > 1)
+            {
+                amountText.text = slot.amount.ToString();
+                amountText.enabled = true;
+            }
+            else
+            {
+                amountText.enabled = false;
+            }
         }
     }
 
