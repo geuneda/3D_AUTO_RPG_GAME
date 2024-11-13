@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Unity.Cinemachine;
+using System.Threading.Tasks;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,8 +12,6 @@ public class PlayerController : MonoBehaviour
     
     private GameObject currentTarget;
     private float lastAttackTime;
-    private float lastPathUpdateTime;
-    private float pathUpdateRate = 0.2f;
     private bool isAutoMode = true;
 
     private NavMeshAgent agent;
@@ -26,7 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip attackSound;
     [SerializeField] private float attackSoundVolume = 0.8f;
 
-    private void Start()
+    private async void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
@@ -39,28 +38,29 @@ public class PlayerController : MonoBehaviour
             agent.speed = stats.MoveSpeed;
             agent.stoppingDistance = attackRange * 0.8f;
         }
+
+        _ = StartCombatUpdateLoop();
     }
 
-    private void Update()
+    private async Awaitable StartCombatUpdateLoop()
     {
-        if (!isAutoMode) return;
-
-        if (Time.time - lastPathUpdateTime > pathUpdateRate)
+        while (true)
         {
+            await Awaitable.NextFrameAsync();
+            if (!isAutoMode) continue;
+            
             UpdateCombatBehavior();
-            lastPathUpdateTime = Time.time;
         }
     }
 
     private void UpdateCombatBehavior()
     {
-        // 주변 몬스터 찾기
         if (currentTarget == null || !currentTarget.activeInHierarchy || 
             currentTarget.GetComponent<EnemyHealth>()?.IsDead == true)
         {
             FindNewTarget();
         }
-
+        
         // 전투 상태 체크 및 카메라 전환
         bool newCombatState = currentTarget != null;
         if (newCombatState != isInCombat)
