@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ItemSlotUI : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
-    [SerializeField] private Text amountText;
+    [SerializeField] private TextMeshProUGUI amountText;
     [SerializeField] private Button button;
 
     public ItemSlot ItemSlot { get; private set; }
