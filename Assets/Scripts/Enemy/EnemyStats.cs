@@ -20,6 +20,16 @@ public class EnemyStats : ScriptableObject
     [Header("보상")]
     public int goldValue = 10;
     public float expValue = 20f;
+
+    public void ApplyStageMultiplier(float statMultiplier, float rewardMultiplier)
+    {
+        maxHealth *= statMultiplier;
+        attackPower *= statMultiplier;
+        defense *= statMultiplier;
+        
+        goldValue = Mathf.RoundToInt(goldValue * rewardMultiplier);
+        expValue *= rewardMultiplier;
+    }
 }
 
 public enum EnemyType

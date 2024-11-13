@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("전투 설정")]
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float detectionRange = 10f;
+    [SerializeField] private float detectionRange = 20f;
     [SerializeField] private LayerMask enemyLayer;
     
     private GameObject currentTarget;

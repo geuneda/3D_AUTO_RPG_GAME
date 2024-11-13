@@ -16,8 +16,13 @@ public class GameEventManager : Singleton<GameEventManager>
     public event System.Action<int> OnGoldChanged;
     public event System.Action<GameState> OnGameStateChanged;
     public event System.Action<float> OnEnemyHealthChanged;
-    public event System.Action OnEnemyDeath;
-
+    public event System.Action<EnemyType> OnEnemyDeath;
+    
+    // 스테이지 관련
+    public event System.Action OnLoadingStarted;
+    public event System.Action OnLoadingFinished;
+    public event System.Action<int> OnStageChanged;
+    
     // 이벤트 트리거 메서드
     public void TriggerPlayerHealthChanged(float healthPercent) => OnPlayerHealthChanged?.Invoke(healthPercent);
     public void TriggerPlayerDeath() => OnPlayerDeath?.Invoke();
@@ -32,5 +37,8 @@ public class GameEventManager : Singleton<GameEventManager>
     public void TriggerGoldChanged(int amount) => OnGoldChanged?.Invoke(amount);
     public void TriggerGameStateChanged(GameState state) => OnGameStateChanged?.Invoke(state);
     public void TriggerEnemyHealthChanged(float percent) => OnEnemyHealthChanged?.Invoke(percent);
-    public void TriggerEnemyDeath() => OnEnemyDeath?.Invoke();
+    public void TriggerEnemyDeath(EnemyType enemyType) => OnEnemyDeath?.Invoke(enemyType);
+    public void TriggerLoadingStarted() => OnLoadingStarted?.Invoke();
+    public void TriggerLoadingFinished() => OnLoadingFinished?.Invoke();
+    public void TriggerStageChanged(int stage) => OnStageChanged?.Invoke(stage);
 } 

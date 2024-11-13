@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
+    [SerializeField] private EnemyType enemyType;
     private EnemyController controller;
     private GameEventManager eventManager;
     private float currentHealth;
@@ -45,7 +46,7 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         DropLoot();
-        eventManager.TriggerEnemyDeath();
+        eventManager.TriggerEnemyDeath(enemyType);
         gameObject.SetActive(false);
     }
     

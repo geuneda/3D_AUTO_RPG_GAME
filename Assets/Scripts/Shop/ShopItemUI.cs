@@ -8,6 +8,7 @@ public class ShopItemUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemNameText;
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private Button purchaseButton;
+    [SerializeField] private TextMeshProUGUI descriptionText;
 
     private ItemData item;
     private System.Action<ItemData> onPurchase;
@@ -20,7 +21,7 @@ public class ShopItemUI : MonoBehaviour
         iconImage.sprite = item.icon;
         itemNameText.text = item.itemName;
         priceText.text = $"{item.price}G";
-
+        descriptionText.text = item.description;
         purchaseButton.onClick.AddListener(() => onPurchase?.Invoke(item));
     }
 

@@ -26,5 +26,6 @@ public enum GameState
     MainMenu,
     Playing,
     Paused,
+    Loading,
     GameOver
 }

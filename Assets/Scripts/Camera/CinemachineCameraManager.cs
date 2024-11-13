@@ -66,8 +66,8 @@ public class CinemachineCameraManager : MonoBehaviour
         }
     }
 
-    private void HandleEnemyDeath()
+    private void HandleEnemyDeath(EnemyType enemyType)
     {
-        // TODO : 처치 후 효과
+        SetCombatState(false);
     }
 } 

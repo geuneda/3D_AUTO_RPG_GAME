@@ -2075,7 +2075,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 2
-  detectionRange: 10
+  detectionRange: 20
   enemyLayer:
     serializedVersion: 2
     m_Bits: 4096
