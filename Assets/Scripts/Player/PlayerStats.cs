@@ -16,9 +16,16 @@ public class PlayerStats : MonoBehaviour
 
     private PlayerLevel playerLevel;
 
+    private float equipmentAttackBonus;
+    private float equipmentDefenseBonus;
+
     public float MaxHealth => maxHealth + ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * healthPerLevel;
-    public float AttackPower => attackPower + ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * attackPowerPerLevel;
-    public float Defense => defense + ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * defensePerLevel;
+    public float AttackPower => attackPower + 
+        ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * attackPowerPerLevel + 
+        equipmentAttackBonus;
+    public float Defense => defense + 
+        ((playerLevel != null ? playerLevel.GetCurrentLevel() : 1) - 1) * defensePerLevel + 
+        equipmentDefenseBonus;
     public float AttackSpeed => attackSpeed;
     public float MoveSpeed => moveSpeed;
 
@@ -44,4 +51,18 @@ public class PlayerStats : MonoBehaviour
     }
 
     public event System.Action OnStatsChanged;
+
+    public void AddEquipmentBonus(float attack, float defense)
+    {
+        equipmentAttackBonus += attack;
+        equipmentDefenseBonus += defense;
+        OnStatsChanged?.Invoke();
+    }
+
+    public void RemoveEquipmentBonus(float attack, float defense)
+    {
+        equipmentAttackBonus -= attack;
+        equipmentDefenseBonus -= defense;
+        OnStatsChanged?.Invoke();
+    }
 } 
