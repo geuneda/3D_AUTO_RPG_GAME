@@ -2079,8 +2079,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 4096
-  isAutoMode: 1
-  pathUpdateRate: 0.2
+  attackSound: {fileID: 8300000, guid: 4310474905e266640852f43bd609a1a4, type: 3}
+  attackSoundVolume: 0.8
 --- !u!114 &2055237131341525423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2129,6 +2129,8 @@ MonoBehaviour:
   currentExp: 0
   expToNextLevel: 100
   expMultiplier: 1.2
+  levelUpSound: {fileID: 8300000, guid: c48a972d3d024c2408a3331750786a29, type: 3}
+  levelUpSoundVolume: 1
 --- !u!195 &-4511467872884003189
 NavMeshAgent:
   m_ObjectHideFlags: 0

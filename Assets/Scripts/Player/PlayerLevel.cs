@@ -14,6 +14,10 @@ public class PlayerLevel : MonoBehaviour
     
     private EffectManager effectManager;
     
+    [Header("Audio")]
+    [SerializeField] private AudioClip levelUpSound;
+    [SerializeField] private float levelUpSoundVolume = 1f;
+    
     private void Start()
     {
         effectManager = EffectManager.Instance;
@@ -41,6 +45,10 @@ public class PlayerLevel : MonoBehaviour
         OnExpChanged?.Invoke(currentExp, expToNextLevel);
         
         effectManager?.PlayLevelUpEffect(transform.position);
+        if (levelUpSound != null)
+        {
+            AudioManager.Instance.PlayOneShot(levelUpSound, transform.position, levelUpSoundVolume);
+        }
     }
     
     public int GetCurrentLevel() => currentLevel;

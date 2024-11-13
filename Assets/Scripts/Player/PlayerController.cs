@@ -22,6 +22,10 @@ public class PlayerController : MonoBehaviour
     private bool isInCombat;
     private EffectManager effectManager;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip attackSound;
+    [SerializeField] private float attackSoundVolume = 0.8f;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -153,6 +157,11 @@ public class PlayerController : MonoBehaviour
 
         Vector3 effectPosition = transform.position + transform.forward * 1f;
         effectManager?.PlayAttackEffect(effectPosition);
+
+        if (attackSound != null)
+        {
+            AudioManager.Instance.PlayOneShot(attackSound, transform.position, attackSoundVolume);
+        }
     }
 
     private void UpdateMovementAnimation()
