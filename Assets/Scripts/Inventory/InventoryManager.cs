@@ -64,12 +64,14 @@ public class InventoryManager : Singleton<InventoryManager>
             if(equippedWeapon != null)
                 UnequipItem(equippedWeapon);
             equippedWeapon = slot;
+            playerStats?.AddEquipmentBonus(slot.item.attackBonus, 0);
         }
         else if(slot.item.itemType == ItemType.Armor)
         {
             if(equippedArmor != null)
                 UnequipItem(equippedArmor);
             equippedArmor = slot;
+            playerStats?.AddEquipmentBonus(0, slot.item.defenseBonus);
         }
 
         items.Remove(slot);
@@ -79,9 +81,15 @@ public class InventoryManager : Singleton<InventoryManager>
     public void UnequipItem(ItemSlot slot)
     {
         if(slot == equippedWeapon)
+        {
             equippedWeapon = null;
+            playerStats?.RemoveEquipmentBonus(slot.item.attackBonus, 0);
+        }
         else if(slot == equippedArmor)
+        {
             equippedArmor = null;
+            playerStats?.RemoveEquipmentBonus(0, slot.item.defenseBonus);
+        }
 
         items.Add(slot);
         OnItemUnequipped?.Invoke(slot);
