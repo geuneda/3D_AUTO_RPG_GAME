@@ -21,14 +21,21 @@ public class InventoryManager : Singleton<InventoryManager>
 
     public void AddItem(ItemData item)
     {
+        if(item == null) return;
+
         if(item.itemType == ItemType.Consumable)
         {
-            // 수량증가
-            var existingSlot = items.Find(slot => slot.item == item);
+            
+            ItemSlot existingSlot = items.Find(slot => slot.item.itemName == item.itemName);
+            
             if(existingSlot != null)
             {
-                existingSlot.amount++;
-                OnItemAdded?.Invoke(existingSlot);
+                items.Remove(existingSlot);
+                OnItemRemoved?.Invoke(existingSlot);
+
+                var _newSlot = new ItemSlot { item = item, amount = existingSlot.amount + 1 };
+                items.Add(_newSlot);
+                OnItemAdded?.Invoke(_newSlot);
                 return;
             }
         }
@@ -40,18 +47,23 @@ public class InventoryManager : Singleton<InventoryManager>
 
     public void UseItem(ItemSlot slot)
     {
+        if(slot == null || slot.item == null) return;
+
         if(slot.item.itemType == ItemType.Consumable)
         {
-            // 포션 사용
             var player = GameObject.FindGameObjectWithTag("Player");
-            if(player.TryGetComponent<PlayerHealth>(out var health))
+            if(player != null && player.TryGetComponent<PlayerHealth>(out var health))
             {
                 health.Heal(slot.item.healthRestoreAmount);
-                slot.amount--;
-                if(slot.amount <= 0)
+                
+                items.Remove(slot);
+                OnItemRemoved?.Invoke(slot);
+
+                if(slot.amount > 1)
                 {
-                    items.Remove(slot);
-                    OnItemRemoved?.Invoke(slot);
+                    var newSlot = new ItemSlot { item = slot.item, amount = slot.amount - 1 };
+                    items.Add(newSlot);
+                    OnItemAdded?.Invoke(newSlot);
                 }
             }
         }
