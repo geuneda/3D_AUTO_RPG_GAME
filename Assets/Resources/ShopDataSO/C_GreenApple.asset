@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec13cbd2ab48804da5b3aaff0059558, type: 3}
+  m_Name: C_GreenApple
+  m_EditorClassIdentifier: 
+  itemName: "\uCD08\uB85D \uC0AC\uACFC"
+  itemType: 0
+  icon: {fileID: -6367837219966448765, guid: 375a132719b8f114aadcfda6bf62f8b1, type: 3}
+  price: 5
+  description: "\uBA39\uC73C\uBA74 \uCCB4\uB825\uC774 15 \uD68C\uBCF5\uB41C\uB2E4."
+  healthRestoreAmount: 15
+  attackBonus: 0
+  defenseBonus: 0

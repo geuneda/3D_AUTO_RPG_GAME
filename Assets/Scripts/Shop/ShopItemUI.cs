@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShopItemUI : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
-    [SerializeField] private Text itemNameText;
-    [SerializeField] private Text priceText;
+    [SerializeField] private TextMeshProUGUI itemNameText;
+    [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private Button purchaseButton;
 
     private ItemData item;

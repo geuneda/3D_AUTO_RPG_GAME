@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
-using Unity.Cinemachine;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -17,8 +16,6 @@ public class MapGenerator : MonoBehaviour
     
     [Header("경로 설정")]
     [SerializeField] private int pathWidth = 2;          // 경로 너비 최소 2 이상으로 설정
-    [SerializeField] private int minPathTurns = 7;       // 몇번 꺾일지 최소
-    [SerializeField] private int maxPathTurns = 14;       // 몇번 꺾일지 최대
     
     [Header("타일 설정")]
     [SerializeField] private float wallHeight = 4f;  // 벽 높이 설정 추가
