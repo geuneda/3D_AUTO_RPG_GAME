@@ -21,12 +21,13 @@ public class GameUI : MonoBehaviour
 
     private void Start()
     {
-        // 플레이어 스폰 이벤트
         var mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapGenerator != null)
         {
             mapGenerator.OnPlayerSpawned += InitializeUI;
         }
+
+        GameCurrency.OnGoldChanged += UpdateGoldUI;
     }
 
     private void InitializeUI(GameObject player)
@@ -78,5 +79,6 @@ public class GameUI : MonoBehaviour
         
         PlayerLevel.OnLevelUp -= UpdateLevelUI;
         PlayerLevel.OnExpChanged -= UpdateExpUI;
+        GameCurrency.OnGoldChanged -= UpdateGoldUI;
     }
 } 
