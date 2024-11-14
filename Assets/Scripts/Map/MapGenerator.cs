@@ -204,7 +204,7 @@ public class MapGenerator : MonoBehaviour
     {
         // 기존 맵 오브젝트 제거
         Transform mapHolder = transform.Find("MapHolder");
-        if (mapHolder != null) Destroy(mapHolder.gameObject);
+        if (mapHolder) Destroy(mapHolder.gameObject);
         
         // 새 맵 홀더 생성
         mapHolder = new GameObject("MapHolder").transform;
@@ -242,7 +242,7 @@ public class MapGenerator : MonoBehaviour
         meshCombiner.CombineMeshes(wallObjects, wallPrefab.GetComponent<MeshRenderer>().sharedMaterial);
 
         // NavMesh 베이크
-        if (navMeshSurface != null)
+        if (navMeshSurface)
         {
             navMeshSurface.BuildNavMesh();
         }

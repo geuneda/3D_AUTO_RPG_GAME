@@ -6,14 +6,14 @@ public class ItemSlotUIPool : MonoBehaviour
     private ItemSlotUI prefab;
     private Transform container;
     private Queue<ItemSlotUI> pool = new Queue<ItemSlotUI>();
-    private const int INITIAL_POOL_SIZE = 10;
+    private const int InitialPoolSize = 10;
 
     public void Initialize(ItemSlotUI prefab, Transform container)
     {
         this.prefab = prefab;
         this.container = container;
         
-        for (int i = 0; i < INITIAL_POOL_SIZE; i++)
+        for (int i = 0; i < InitialPoolSize; i++)
         {
             CreateNewSlotUI();
         }

@@ -20,7 +20,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
     public void AddItem(ItemData item)
     {
-        if(item == null) return;
+        if(!item) return;
 
         if(item.itemType == ItemType.Consumable)
         {
@@ -41,7 +41,7 @@ public class InventoryManager : Singleton<InventoryManager>
         eventManager.TriggerItemAdded(newSlot);
     }
 
-    public void RemoveItem(ItemSlot slot)
+    private void RemoveItem(ItemSlot slot)
     {
         if (!items.Contains(slot)) return;
         
@@ -52,25 +52,21 @@ public class InventoryManager : Singleton<InventoryManager>
 
     public void UseItem(ItemSlot slot)
     {
-        if(slot == null || slot.item == null) return;
+        if(slot == null || !slot.item) return;
 
-        if(slot.item.itemType == ItemType.Consumable)
-        {
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if(player != null && player.TryGetComponent<PlayerHealth>(out var health))
-            {
-                health.Heal(slot.item.healthRestoreAmount);
+        if (slot.item.itemType != ItemType.Consumable) return;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (!player || !player.TryGetComponent<PlayerHealth>(out var health)) return;
+        health.Heal(slot.item.healthRestoreAmount);
                 
-                if(slot.amount <= 1)
-                {
-                    RemoveItem(slot);
-                }
-                else
-                {
-                    slot.amount--;
-                    eventManager.TriggerItemAdded(slot);
-                }
-            }
+        if(slot.amount <= 1)
+        {
+            RemoveItem(slot);
+        }
+        else
+        {
+            slot.amount--;
+            eventManager.TriggerItemAdded(slot);
         }
     }
 

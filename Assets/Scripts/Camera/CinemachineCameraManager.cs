@@ -35,7 +35,7 @@ public class CinemachineCameraManager : MonoBehaviour
 
     private void SetupCameras(GameObject player)
     {
-        if (player != null)
+        if (player)
         {
             this.player = player;
             followCam.Follow = player.transform;
@@ -47,7 +47,7 @@ public class CinemachineCameraManager : MonoBehaviour
 
     public void SetCombatState(bool inCombat)
     {
-        if (followCam != null && combatCam != null)
+        if (followCam && combatCam)
         {
             followCam.Priority = (PrioritySettings)(inCombat ? normalPriority - 1 : normalPriority);
             combatCam.Priority = (PrioritySettings)(inCombat ? combatPriority : normalPriority - 1);
@@ -56,7 +56,7 @@ public class CinemachineCameraManager : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
-        if (combatCam != null)
+        if (combatCam)
         {
             combatCam.Priority = (PrioritySettings)normalPriority;
         }

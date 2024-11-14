@@ -65,15 +65,20 @@ public class InventoryUI : MonoBehaviour
 
     private void UnequipItemUI(ItemSlot slot)
     {
-        if(slot.item.itemType == ItemType.Weapon)
-            weaponSlotUI.ClearSlot();
-        else if(slot.item.itemType == ItemType.Armor)
-            armorSlotUI.ClearSlot();
+        switch (slot.item.itemType)
+        {
+            case ItemType.Weapon:
+                weaponSlotUI.ClearSlot();
+                break;
+            case ItemType.Armor:
+                armorSlotUI.ClearSlot();
+                break;
+        }
     }
 
     private void OnDestroy()
     {
-        if (eventManager != null)
+        if (eventManager)
         {
             eventManager.OnItemAdded -= AddItemUI;
             eventManager.OnItemRemoved -= RemoveItemUI;

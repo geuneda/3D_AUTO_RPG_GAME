@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AudioManager : Singleton<AudioManager>
 {
-    [Header("Audio Sources")]
+    [Header("Audio Pool")]
     private ObjectPool<AudioSource> audioSourcePool;
     [SerializeField] private int poolSize = 5;
 
@@ -40,7 +40,7 @@ public class AudioManager : Singleton<AudioManager>
     private IEnumerator ReturnToPool(AudioSource audioSource, float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (audioSource != null)
+        if (audioSource)
         {
             audioSource.Stop();
             audioSourcePool.Return(audioSource);

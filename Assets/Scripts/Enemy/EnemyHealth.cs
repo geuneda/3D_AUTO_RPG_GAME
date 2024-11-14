@@ -29,18 +29,16 @@ public class EnemyHealth : MonoBehaviour
     
     public void TakeDamage(float damage)
     {
-        if (controller == null || controller.GetStats() == null) return;
+        if (!controller || !controller.GetStats()) return;
         
-        float actualDamage = Mathf.Max(0, damage - controller.GetStats().defense);
+        var actualDamage = Mathf.Max(0, damage - controller.GetStats().defense);
         currentHealth = Mathf.Max(0, currentHealth - actualDamage);
         
         eventManager.TriggerEnemyHealthChanged(currentHealth / controller.GetStats().maxHealth);
-        
-        if (currentHealth <= 0)
-        {
-            IsDead = true;
-            Die();
-        }
+
+        if (!(currentHealth <= 0)) return;
+        IsDead = true;
+        Die();
     }
     
     private void Die()
@@ -52,7 +50,7 @@ public class EnemyHealth : MonoBehaviour
     
     private void DropLoot()
     {
-        if (controller == null || controller.GetStats() == null) return;
+        if (!controller || !controller.GetStats()) return;
         
         GameCurrency.Instance.AddGold(controller.GetStats().goldValue);
         
@@ -64,10 +62,8 @@ public class EnemyHealth : MonoBehaviour
     
     public void ResetHealth()
     {
-        if (controller != null && controller.GetStats() != null)
-        {
-            currentHealth = controller.GetStats().maxHealth;
-            eventManager.TriggerEnemyHealthChanged(1f);
-        }
+        if (!controller || !controller.GetStats()) return;
+        currentHealth = controller.GetStats().maxHealth;
+        eventManager.TriggerEnemyHealthChanged(1f);
     }
 } 

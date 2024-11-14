@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class ObjectPool<T> where T : Component
 {
-    private T prefab;
-    private Queue<T> pool = new Queue<T>();
-    private Transform parent;
+    private readonly T prefab;
+    private readonly Queue<T> pool = new Queue<T>();
+    private readonly Transform parent;
 
     public ObjectPool(T prefab, int initialSize, Transform parent = null)
     {
         this.prefab = prefab;
         this.parent = parent;
-        for (int i = 0; i < initialSize; i++)
+        for (var i = 0; i < initialSize; i++)
         {
             CreateNewObject();
         }
@@ -19,7 +19,7 @@ public class ObjectPool<T> where T : Component
 
     private T CreateNewObject()
     {
-        T obj = GameObject.Instantiate(prefab, parent);
+        var obj = Object.Instantiate(prefab, parent);
         obj.gameObject.SetActive(false);
         pool.Enqueue(obj);
         return obj;
@@ -27,7 +27,7 @@ public class ObjectPool<T> where T : Component
 
     public T Get()
     {
-        T obj = pool.Count > 0 ? pool.Dequeue() : CreateNewObject();
+        var obj = pool.Count > 0 ? pool.Dequeue() : CreateNewObject();
         obj.gameObject.SetActive(true);
         return obj;
     }

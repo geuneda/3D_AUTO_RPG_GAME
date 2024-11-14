@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class MapMeshCombiner : MonoBehaviour
 {
-    private const int VERTICES_PER_CHUNK = 65000;
+    private const int VerticesPerChunk = 65000;
 
     public void CombineMeshes(List<GameObject> objects, Material material)
     {
@@ -14,7 +14,7 @@ public class MapMeshCombiner : MonoBehaviour
         foreach (var obj in objects)
         {
             var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
-            if (vertexCount + mesh.vertexCount > VERTICES_PER_CHUNK)
+            if (vertexCount + mesh.vertexCount > VerticesPerChunk)
             {
                 chunks.Add(currentChunk);
                 currentChunk = new List<GameObject>();

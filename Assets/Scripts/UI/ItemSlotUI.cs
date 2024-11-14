@@ -22,23 +22,22 @@ public class ItemSlotUI : MonoBehaviour
 
     public void SetItem(ItemSlot slot)
     {
-        if (slot == null || slot.item == null) return;
+        if (slot == null || !slot.item) return;
 
         ItemSlot = slot;
         iconImage.sprite = slot.item.icon;
         iconImage.enabled = true;
+
+        if (!amountText) return;
         
-        if(amountText != null)
+        if(slot.item.itemType == ItemType.Consumable && slot.amount > 1)
         {
-            if(slot.item.itemType == ItemType.Consumable && slot.amount > 1)
-            {
-                amountText.text = slot.amount.ToString();
-                amountText.enabled = true;
-            }
-            else
-            {
-                amountText.enabled = false;
-            }
+            amountText.text = slot.amount.ToString();
+            amountText.enabled = true;
+        }
+        else
+        {
+            amountText.enabled = false;
         }
     }
 
@@ -47,7 +46,7 @@ public class ItemSlotUI : MonoBehaviour
         ItemSlot = null;
         iconImage.sprite = null;
         iconImage.enabled = false;
-        if(amountText != null)
+        if(amountText)
         {
             amountText.enabled = false;
         }

@@ -43,11 +43,11 @@ public class StageSelectUI : MonoBehaviour
             eventTrigger.triggers.Add(enterEntry);
             
             var buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
-            if (buttonText != null)
+            if (buttonText)
                 buttonText.text = $"Stage {stageNumber}";
         }
         
-        if (closeButton != null)
+        if (closeButton)
             closeButton.onClick.AddListener(Hide);
     }
 
@@ -57,7 +57,7 @@ public class StageSelectUI : MonoBehaviour
         gameManager.ChangeGameState(GameState.Paused);
     }
 
-    public void Hide()
+    private void Hide()
     {
         stageSelectPanel.SetActive(false);
         gameManager.ChangeGameState(GameState.Playing);
@@ -92,7 +92,7 @@ public class StageSelectUI : MonoBehaviour
             }
         }
         
-        if (closeButton != null)
+        if (closeButton)
             closeButton.onClick.RemoveAllListeners();
     }
 } 

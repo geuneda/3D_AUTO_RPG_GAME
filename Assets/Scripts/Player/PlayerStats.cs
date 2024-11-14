@@ -40,7 +40,7 @@ public class PlayerStats : MonoBehaviour
 
     private void OnDisable()
     {
-        if (eventManager != null)
+        if (eventManager)
         {
             eventManager.OnPlayerLevelUp -= UpdateStatsOnLevelUp;
         }

@@ -4,7 +4,7 @@ using TMPro;
 
 public class GameUI : MonoBehaviour
 {
-    [Header("UI Elements")]
+    [Header("UI")]
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Slider healthSlider;
@@ -24,45 +24,43 @@ public class GameUI : MonoBehaviour
         eventManager.OnPlayerExpChanged += UpdateExpUI;
 
         // 초기 UI 설정
-        if (goldText != null)
+        if (goldText)
             UpdateGoldUI(GameCurrency.Instance.GetCurrentGold());
     }
 
     private void UpdateGoldUI(int amount)
     {
-        if (goldText != null)
+        if (goldText)
             goldText.text = $"{amount}G";
     }
 
     private void UpdateHealthUI(float healthPercent)
     {
-        if (healthSlider != null)
+        if (healthSlider)
             healthSlider.value = healthPercent;
         
-        if (healthText != null)
+        if (healthText)
             healthText.text = $"{(healthPercent * 100):F0}%";
     }
 
     private void UpdateLevelUI(int level)
     {
-        if (levelText != null)
+        if (levelText)
             levelText.text = $"Lv.{level}";
     }
 
     private void UpdateExpUI(float currentExp, float maxExp)
     {
-        if (expSlider != null)
+        if (expSlider)
             expSlider.value = currentExp / maxExp;
     }
 
     private void OnDestroy()
     {
-        if (eventManager != null)
-        {
-            eventManager.OnGoldChanged -= UpdateGoldUI;
-            eventManager.OnPlayerHealthChanged -= UpdateHealthUI;
-            eventManager.OnPlayerLevelUp -= UpdateLevelUI;
-            eventManager.OnPlayerExpChanged -= UpdateExpUI;
-        }
+        if (!eventManager) return;
+        eventManager.OnGoldChanged -= UpdateGoldUI;
+        eventManager.OnPlayerHealthChanged -= UpdateHealthUI;
+        eventManager.OnPlayerLevelUp -= UpdateLevelUI;
+        eventManager.OnPlayerExpChanged -= UpdateExpUI;
     }
 } 

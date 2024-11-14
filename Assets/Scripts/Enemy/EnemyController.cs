@@ -22,12 +22,10 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         healthSystem = GetComponent<EnemyHealth>();
         animator = GetComponent<Animator>();
-        
-        if (stats != null)
-        {
-            agent.speed = stats.moveSpeed;
-            agent.stoppingDistance = stats.attackRange * 0.8f;
-        }
+
+        if (!stats) return;
+        agent.speed = stats.moveSpeed;
+        agent.stoppingDistance = stats.attackRange * 0.8f;
     }
 
 #pragma warning disable CS1998 // 이 비동기 메서드에는 'await' 연산자가 없으며 메서드가 동시에 실행됩니다.
@@ -45,14 +43,14 @@ public class EnemyController : MonoBehaviour
         {
             await Awaitable.NextFrameAsync();
             
-            if (target == null || stats == null) continue;
+            if (!target || !stats) continue;
             
-            float distanceToTarget = Vector3.SqrMagnitude(transform.position - target.position);
-            float detectionRangeSqr = stats.detectionRange * stats.detectionRange;
+            var distanceToTarget = Vector3.SqrMagnitude(transform.position - target.position);
+            var detectionRangeSqr = stats.detectionRange * stats.detectionRange;
             
             if (distanceToTarget <= detectionRangeSqr)
             {
-                float attackRangeSqr = stats.attackRange * stats.attackRange;
+                var attackRangeSqr = stats.attackRange * stats.attackRange;
                 if (distanceToTarget <= attackRangeSqr)
                 {
                     StopMoving();

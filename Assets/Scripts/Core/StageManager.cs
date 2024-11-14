@@ -34,11 +34,9 @@ public class StageManager : Singleton<StageManager>
 
     private void OnDestroy()
     {
-        if (eventManager != null)
-        {
-            eventManager.OnEnemyDeath -= CheckBossDeathAndProgress;
-            eventManager.OnPlayerDeath -= HandlePlayerDeath;
-        }
+        if (!eventManager) return;
+        eventManager.OnEnemyDeath -= CheckBossDeathAndProgress;
+        eventManager.OnPlayerDeath -= HandlePlayerDeath;
     }
 
     public void SetStage(int stage)
@@ -47,7 +45,7 @@ public class StageManager : Singleton<StageManager>
         StartNewStage();
     }
 
-    public void IncreaseStage()
+    private void IncreaseStage()
     {
         currentStage++;
         StartNewStage();
@@ -77,13 +75,13 @@ public class StageManager : Singleton<StageManager>
         GameManager.Instance.DestroyCurrentPlayer();
 
         var mapGenerator = FindFirstObjectByType<MapGenerator>();
-        if (mapGenerator != null)
+        if (mapGenerator)
         {
             mapGenerator.GenerateMap();
         }
         
         var player = GameManager.Instance.CurrentPlayer;
-        if (player != null && player.TryGetComponent<PlayerHealth>(out var health))
+        if (player && player.TryGetComponent<PlayerHealth>(out var health))
         {
             health.ResetHealth();
         }

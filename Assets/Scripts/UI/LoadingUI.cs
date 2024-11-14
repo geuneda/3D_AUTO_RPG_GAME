@@ -35,13 +35,13 @@ public class LoadingUI : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (stageText != null)
+        if (stageText)
             stageText.text = $"Stage {stageManager.CurrentStage}";
             
-        if (tipText != null && loadingTips.Length > 0)
+        if (tipText && loadingTips.Length > 0)
             tipText.text = loadingTips[Random.Range(0, loadingTips.Length)];
             
-        if (progressBar != null)
+        if (progressBar)
             progressBar.value = 0f;
     }
 
@@ -52,7 +52,7 @@ public class LoadingUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (eventManager != null)
+        if (eventManager)
         {
             eventManager.OnLoadingStarted -= ShowLoading;
             eventManager.OnLoadingFinished -= HideLoading;

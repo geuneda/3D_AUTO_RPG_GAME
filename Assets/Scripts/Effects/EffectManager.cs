@@ -12,7 +12,7 @@ public class EffectManager : Singleton<EffectManager>
     private ObjectPool<ParticleSystem> attackEffectPool;
     private GameEventManager eventManager;
     
-    private const int POOL_SIZE = 5;
+    private const int PoolSize = 5;
 
     protected override void Awake()
     {
@@ -28,7 +28,7 @@ public class EffectManager : Singleton<EffectManager>
 
     private void OnDestroy()
     {
-        if (eventManager != null)
+        if (eventManager)
         {
             eventManager.OnPlayerLevelUp -= HandleLevelUp;
         }
@@ -36,17 +36,17 @@ public class EffectManager : Singleton<EffectManager>
 
     private void InitializePools()
     {
-        if (levelUpEffectPrefab != null && levelUpEffectPrefab.TryGetComponent<ParticleSystem>(out var levelUpPS))
-            levelUpEffectPool = new ObjectPool<ParticleSystem>(levelUpPS, POOL_SIZE, transform);
+        if (levelUpEffectPrefab && levelUpEffectPrefab.TryGetComponent<ParticleSystem>(out var levelUpPS))
+            levelUpEffectPool = new ObjectPool<ParticleSystem>(levelUpPS, PoolSize, transform);
 
-        if (attackEffectPrefab != null && attackEffectPrefab.TryGetComponent<ParticleSystem>(out var attackPS))
-            attackEffectPool = new ObjectPool<ParticleSystem>(attackPS, POOL_SIZE, transform);
+        if (attackEffectPrefab && attackEffectPrefab.TryGetComponent<ParticleSystem>(out var attackPS))
+            attackEffectPool = new ObjectPool<ParticleSystem>(attackPS, PoolSize, transform);
     }
 
     private void HandleLevelUp(int level)
     {
         var player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (player)
         {
             PlayLevelUpEffect(player.transform.position);
         }
@@ -54,22 +54,18 @@ public class EffectManager : Singleton<EffectManager>
 
     public void PlayLevelUpEffect(Vector3 position)
     {
-        if (levelUpEffectPool != null)
-        {
-            var effect = levelUpEffectPool.Get();
-            effect.transform.position = position;
-            StartCoroutine(ReturnToPool(effect, effect.main.duration, levelUpEffectPool));
-        }
+        if (levelUpEffectPool == null) return;
+        var effect = levelUpEffectPool.Get();
+        effect.transform.position = position;
+        StartCoroutine(ReturnToPool(effect, effect.main.duration, levelUpEffectPool));
     }
 
     public void PlayAttackEffect(Vector3 position)
     {
-        if (attackEffectPool != null)
-        {
-            var effect = attackEffectPool.Get();
-            effect.transform.position = position;
-            StartCoroutine(ReturnToPool(effect, effect.main.duration, attackEffectPool));
-        }
+        if (attackEffectPool == null) return;
+        var effect = attackEffectPool.Get();
+        effect.transform.position = position;
+        StartCoroutine(ReturnToPool(effect, effect.main.duration, attackEffectPool));
     }
 
     private IEnumerator ReturnToPool(ParticleSystem effect, float duration, ObjectPool<ParticleSystem> pool)

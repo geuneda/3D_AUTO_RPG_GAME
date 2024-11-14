@@ -18,15 +18,15 @@ public class EnemySpawnManager : MonoBehaviour
     private void Start()
     {
         mapGenerator = FindFirstObjectByType<MapGenerator>();
-        if (mapGenerator != null)
+        if (mapGenerator)
         {
             mapGenerator.OnMapGenerated += SpawnEnemies;
         }
     }
-    
-    public void SpawnEnemies()
+
+    private void SpawnEnemies()
     {
-        if (mapGenerator == null || mapGenerator.MainPath == null || mapGenerator.MainPath.Count == 0)
+        if (!mapGenerator || mapGenerator.MainPath == null || mapGenerator.MainPath.Count == 0)
         {
             Debug.LogError("EnemySpawnManager : SpawnEnemies 확인바람");
             return;

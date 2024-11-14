@@ -32,8 +32,8 @@ public class PlayerLevel : MonoBehaviour
             LevelUp();
         }
     }
-    
-    public void LevelUp()
+
+    private void LevelUp()
     {
         currentExp -= expToNextLevel;
         currentLevel++;
@@ -43,7 +43,7 @@ public class PlayerLevel : MonoBehaviour
         eventManager.TriggerPlayerExpChanged(currentExp, expToNextLevel);
         
         effectManager?.PlayLevelUpEffect(transform.position);
-        if (levelUpSound != null)
+        if (levelUpSound)
         {
             AudioManager.Instance.PlayOneShot(levelUpSound, transform.position, levelUpSoundVolume);
         }

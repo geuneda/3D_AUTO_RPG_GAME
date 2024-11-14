@@ -29,10 +29,8 @@ public class ShopManager : MonoBehaviour
 
     private void OnPurchaseItem(ItemData item)
     {
-        if (currency.HasEnoughGold(item.price))
-        {
-            currency.SpendGold(item.price);
-            inventory.AddItem(item);
-        }
+        if (!currency.HasEnoughGold(item.price)) return;
+        currency.SpendGold(item.price);
+        inventory.AddItem(item);
     }
 } 

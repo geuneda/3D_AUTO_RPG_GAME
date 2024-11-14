@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
 
     public void SpawnPlayer(Vector3 position)
     {
-        if (currentPlayer != null)
+        if (currentPlayer)
         {
             Destroy(currentPlayer);
         }
@@ -53,11 +53,9 @@ public class GameManager : Singleton<GameManager>
 
     public void DestroyCurrentPlayer()
     {
-        if (currentPlayer != null)
-        {
-            Destroy(currentPlayer);
-            currentPlayer = null;
-        }
+        if (!currentPlayer) return;
+        Destroy(currentPlayer);
+        currentPlayer = null;
     }
 }
 

@@ -3,6 +3,9 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
+    private static readonly int Speed = Animator.StringToHash("Speed");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+
     [Header("전투 설정")]
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float detectionRange = 20f;
@@ -10,7 +13,7 @@ public class PlayerController : MonoBehaviour
     
     private GameObject currentTarget;
     private float lastAttackTime;
-    private bool isAutoMode = true;
+    private readonly bool isAutoMode = true;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -33,7 +36,7 @@ public class PlayerController : MonoBehaviour
         cameraManager = FindFirstObjectByType<CinemachineCameraManager>();
         effectManager = EffectManager.Instance;
 
-        if (stats != null)
+        if (stats)
         {
             agent.speed = stats.MoveSpeed;
             agent.stoppingDistance = attackRange * 0.8f;
@@ -55,14 +58,14 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateCombatBehavior()
     {
-        if (currentTarget == null || !currentTarget.activeInHierarchy || 
+        if (!currentTarget || !currentTarget.activeInHierarchy || 
             currentTarget.GetComponent<EnemyHealth>()?.IsDead == true)
         {
             FindNewTarget();
         }
         
         // 전투 상태 체크 및 카메라 전환
-        bool newCombatState = currentTarget != null;
+        bool newCombatState = currentTarget;
         if (newCombatState != isInCombat)
         {
             isInCombat = newCombatState;
@@ -70,7 +73,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 주변에 몬스터가 있으면 처치
-        if (currentTarget != null)
+        if (currentTarget)
         {
             float distanceToTarget = Vector3.Distance(transform.position, currentTarget.transform.position);
             
@@ -133,19 +136,19 @@ public class PlayerController : MonoBehaviour
 
     private void AttackTarget()
     {
-        if (stats == null) return;
+        if (!stats) return;
         if (Time.time - lastAttackTime < 1f / stats.AttackSpeed) return;
 
-        if (currentTarget != null)
+        if (currentTarget)
         {
             Vector3 directionToTarget = currentTarget.transform.position - transform.position;
             directionToTarget.y = 0;
             transform.rotation = Quaternion.LookRotation(directionToTarget);
         }
 
-        animator?.SetTrigger("Attack");
+        animator?.SetTrigger(Attack);
 
-        if (currentTarget != null)
+        if (currentTarget)
         {
             if (currentTarget.TryGetComponent<EnemyHealth>(out var enemyHealth))
             {
@@ -158,7 +161,7 @@ public class PlayerController : MonoBehaviour
         Vector3 effectPosition = transform.position + transform.forward * 1f;
         effectManager?.PlayAttackEffect(effectPosition);
 
-        if (attackSound != null)
+        if (attackSound)
         {
             AudioManager.Instance.PlayOneShot(attackSound, transform.position, attackSoundVolume);
         }
@@ -166,9 +169,9 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMovementAnimation()
     {
-        if (animator != null)
+        if (animator)
         {
-            animator.SetFloat("Speed", agent.velocity.magnitude);
+            animator.SetFloat(Speed, agent.velocity.magnitude);
         }
     }
 } 
